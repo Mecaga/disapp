@@ -10,6 +10,7 @@
     <div id="app">
         <div class="welcome-screen">
             <h1>MecagaChat'e Hoşgeldiniz! 🎉</h1>
+            <!-- Kayıt Formu -->
             <div class="form-container" id="registerForm">
                 <h2>Kayıt Ol</h2>
                 <input type="text" id="registerUsername" placeholder="Kullanıcı Adı">
@@ -21,6 +22,8 @@
                 <button id="registerBtn">Kayıt Ol</button>
                 <p>Zaten hesabınız var mı? <span id="showLogin">Giriş Yap</span></p>
             </div>
+
+            <!-- Giriş Formu -->
             <div class="form-container" id="loginForm" style="display:none;">
                 <h2>Giriş Yap</h2>
                 <input type="email" id="loginEmail" placeholder="Email">
@@ -33,6 +36,7 @@
             </div>
         </div>
 
+        <!-- Chat Ekranı -->
         <div class="chat-screen" id="chatScreen" style="display:none;">
             <h2>Hoşgeldiniz, <span id="currentUser"></span>!</h2>
             <div id="messagesContainer" class="messages"></div>
