@@ -1,59 +1,48 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MecagaChat</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MecagaChat</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="app">
+    <div id="app">
+        <div class="welcome-screen">
+            <h1>MecagaChat'e Hoşgeldiniz! 🎉</h1>
+            <div class="form-container" id="registerForm">
+                <h2>Kayıt Ol</h2>
+                <input type="text" id="registerUsername" placeholder="Kullanıcı Adı">
+                <input type="email" id="registerEmail" placeholder="Email">
+                <div class="password-wrapper">
+                    <input type="password" id="registerPassword" placeholder="Şifre">
+                    <button class="toggle-password">👁️</button>
+                </div>
+                <button id="registerBtn">Kayıt Ol</button>
+                <p>Zaten hesabınız var mı? <span id="showLogin">Giriş Yap</span></p>
+            </div>
+            <div class="form-container" id="loginForm" style="display:none;">
+                <h2>Giriş Yap</h2>
+                <input type="email" id="loginEmail" placeholder="Email">
+                <div class="password-wrapper">
+                    <input type="password" id="loginPassword" placeholder="Şifre">
+                    <button class="toggle-password">👁️</button>
+                </div>
+                <button id="loginBtn">Giriş Yap</button>
+                <p>Hesabınız yok mu? <span id="showRegister">Kayıt Ol</span></p>
+            </div>
+        </div>
 
-  <!-- HOŞGELDİN EKRANI -->
-  <div id="welcomeScreen">
-    <h1>MecagaChat'e Hoşgeldiniz! 🎉</h1>
-    <div class="auth-buttons">
-      <button id="showRegister">Kayıt Ol</button>
-      <button id="showLogin">Giriş Yap</button>
+        <div class="chat-screen" id="chatScreen" style="display:none;">
+            <h2>Hoşgeldiniz, <span id="currentUser"></span>!</h2>
+            <div id="messagesContainer" class="messages"></div>
+            <div class="message-input">
+                <input type="text" id="messageInput" placeholder="Mesaj yaz...">
+                <button id="sendBtn">Gönder</button>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- KAYIT EKRANI -->
-  <div id="registerScreen" class="hidden">
-    <h2>Kayıt Ol</h2>
-    <input type="text" id="regUsername" placeholder="Kullanıcı Adı">
-    <input type="email" id="regEmail" placeholder="E-mail">
-    <div class="password-wrapper">
-      <input type="password" id="loginPassword" placeholder="Şifre">
-<button class="toggle-password">👁️</button>
-
-    </div>
-    <button id="registerBtn">Kayıt Ol</button>
-    <button id="backToWelcome1">Geri</button>
-  </div>
-
-  <!-- GİRİŞ EKRANI -->
-  <div id="loginScreen" class="hidden">
-    <h2>Giriş Yap</h2>
-    <input type="email" id="loginEmail" placeholder="E-mail">
-    <div class="password-wrapper">
-      <input type="password" id="loginPassword" placeholder="Şifre">
-      <button type="button" class="toggle-password">👁️</button>
-    </div>
-    <button id="loginBtn">Giriş Yap</button>
-    <button id="backToWelcome2">Geri</button>
-  </div>
-
-  <!-- SOHBET EKRANI -->
-  <div id="chatScreen" class="hidden">
-    <h2>Hoşgeldiniz, <span id="currentUser"></span></h2>
-    <div id="messagesContainer"></div>
-    <input type="text" id="messageInput" placeholder="Mesaj yaz...">
-    <button id="sendMessageBtn">Gönder</button>
-  </div>
-
-</div>
-
-<script src="app.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
