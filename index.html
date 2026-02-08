@@ -55,4 +55,36 @@
 
     <!-- JS bağlantıları daha sonra eklenecek -->
 </body>
+
+    <script>
+    // Kullanıcı bilgileri (simülasyon)
+    const currentUser = {
+        id: '#0001',
+        name: 'MehmetEmin',
+        online: true // true = çevrimiçi, false = çevrimdışı
+    };
+
+    // Kullanıcı adını ve durumunu göstermek için fonksiyon
+    function updateCurrentUserInfo() {
+        const nameElement = document.getElementById('currentUserName');
+        const statusElement = document.getElementById('currentUserStatus');
+
+        // Kullanıcı adını güncelle
+        nameElement.textContent = currentUser.name;
+
+        // Durum emojisi
+        const statusEmoji = currentUser.online ? '🟢' : '⚫';
+        const statusText = currentUser.online ? 'Çevrimiçi' : 'Çevrimdışı';
+
+        // Durumu göster
+        statusElement.textContent = `${statusEmoji} ${statusText}`;
+    }
+
+    // Sayfa açıldığında çalıştır
+    window.onload = function() {
+        updateCurrentUserInfo();
+    };
+</script>
+
+    
 </html>
