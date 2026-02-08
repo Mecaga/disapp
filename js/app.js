@@ -109,3 +109,52 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 <script type="module" src="app.js"></script>
+// --- KATEGORİ VE KANAL LİSTELEME SİSTEMİ ---
+const categoriesContainer = document.getElementById('categoriesContainer');
+
+// Şimdilik bunları el ile (statik) ekliyoruz, ilerde Firestore'a bağlayabiliriz
+const defaultCategories = [
+    {
+        name: "Metin Kanalları",
+        channels: [
+            { id: "genel", name: "genel", type: "text" },
+            { id: "yardim", name: "yardım-destek", type: "text" }
+        ]
+    },
+    {
+        name: "Ses Kanalları",
+        channels: [
+            { id: "sohbet-ses", name: "Sohbet Odası", type: "voice" }
+        ]
+    }
+];
+
+function renderCategories() {
+    if (!categoriesContainer) return;
+
+    categoriesContainer.innerHTML = defaultCategories.map(cat => `
+        <div class="category">
+            <div class="category-header" style="padding: 10px; color: #8e9297; font-size: 12px; font-weight: bold; text-transform: uppercase;">
+                ▼ ${cat.name}
+            </div>
+            <div class="category-items">
+                ${cat.channels.map(chan => `
+                    <div class="channel-item" onclick="selectChannel('${chan.id}')" style="padding: 6px 20px; color: #8e9297; cursor: pointer; border-radius: 4px; margin: 2px 8px;">
+                        <span style="margin-right: 8px;">${chan.type === 'text' ? '#' : '🔊'}</span>
+                        ${chan.name}
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `).join('');
+}
+
+// Kanal seçme fonksiyonu
+window.selectChannel = (channelId) => {
+    document.querySelector('.chat-header-name').textContent = "# " + channelId;
+    console.log("Kanal seçildi: ", channelId);
+    // Burada o kanala ait mesajları yükleme kodu gelecek
+};
+
+// Sayfa yüklendiğinde kategorileri bas
+renderCategories();
