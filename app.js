@@ -1,106 +1,129 @@
-// Kullanıcı verisi saklama
-let users = []; // {username, email, password}
+// app.js
+
+// Kullanıcı ve mesaj verileri
+let users = []; // {username, email, password, online}
 let currentUser = null;
-let messages = [];
-
-// DOM elementleri
-const registerScreen = document.getElementById('registerScreen');
-const loginScreen = document.getElementById('loginScreen');
-const chatScreen = document.getElementById('chatScreen');
-
-const regUsername = document.getElementById('regUsername');
-const regEmail = document.getElementById('regEmail');
-const regPassword = document.getElementById('regPassword');
-const registerBtn = document.getElementById('registerBtn');
-
-const loginEmail = document.getElementById('loginEmail');
-const loginPassword = document.getElementById('loginPassword');
-const loginBtn = document.getElementById('loginBtn');
-
-const goToLogin = document.getElementById('goToLogin');
-const goToRegister = document.getElementById('goToRegister');
-
-const userDisplay = document.getElementById('userDisplay');
-const messagesContainer = document.getElementById('messages');
-const messageInput = document.getElementById('messageInput');
-const sendBtn = document.getElementById('sendBtn');
+let messages = []; // {author, text, time, reactions}
 
 // Kayıt ol
-registerBtn.addEventListener('click', () => {
-    const username = regUsername.value.trim();
-    const email = regEmail.value.trim();
-    const password = regPassword.value.trim();
+function registerUser() {
+    const username = document.getElementById('regUsername').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value.trim();
 
     if (!username || !email || !password) {
-        alert('Lütfen tüm alanları doldurun!');
+        alert("Tüm alanları doldurun!");
         return;
     }
 
-    users.push({username, email, password});
-    alert('Kayıt başarılı! Giriş ekranına yönlendiriliyorsunuz.');
-
-    // Ekranı Giriş olarak değiştir
-    registerScreen.style.display = 'none';
-    loginScreen.style.display = 'flex';
-});
-
-// Giriş ekranına geçiş
-goToLogin.addEventListener('click', () => {
-    registerScreen.style.display = 'none';
-    loginScreen.style.display = 'flex';
-});
-
-goToRegister.addEventListener('click', () => {
-    loginScreen.style.display = 'none';
-    registerScreen.style.display = 'flex';
-});
-
-// Giriş yap
-loginBtn.addEventListener('click', () => {
-    const email = loginEmail.value.trim();
-    const password = loginPassword.value.trim();
-
-    const user = users.find(u => u.email === email && u.password === password);
-
-    if (!user) {
-        alert('Email veya şifre yanlış!');
+    if (users.find(u => u.email === email)) {
+        alert("Bu email zaten kayıtlı!");
         return;
     }
 
-    currentUser = user.username;
-    userDisplay.textContent = currentUser;
+    users.push({ username, email, password, online: false });
+    alert("Kayıt başarılı! Giriş yapabilirsiniz.");
 
-    loginScreen.style.display = 'none';
-    chatScreen.style.display = 'flex';
-});
-
-// Mesaj gönderme
-sendBtn.addEventListener('click', sendMessage);
-messageInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') sendMessage();
-});
-
-function sendMessage() {
-    const text = messageInput.value.trim();
-    if (!text) return;
-
-    messages.push({
-        user: currentUser,
-        text: text,
-        time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-    });
-
-    renderMessages();
-    messageInput.value = '';
+    // Formu temizle
+    document.getElementById('regUsername').value = '';
+    document.getElementById('regEmail').value = '';
+    document.getElementById('regPassword').value = '';
 }
 
-function renderMessages() {
-    messagesContainer.innerHTML = messages.map(msg => `
-        <div class="message">
-            <div class="message-user">${msg.user} • ${msg.time}</div>
-            <div class="message-text">${msg.text}</div>
-        </div>
-    `).join('');
+// Giriş yap
+function loginUser() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
 
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    const user = users.find(u => u.email === email && u.password === password);
+    if (!user) {
+        alert("Email veya şifre yanlış!");
+        return;
+    }
+
+    currentUser = user;
+    currentUser.online = true;
+
+    // Chat ekranını aç, giriş ekranını gizle
+    document.getElementById('welcomeScreen').style.display = 'none';
+    document.getElementById('chatScreen').style.display = 'block';
+
+    // Kullanıcı bilgilerini göster
+    document.getElementById('displayUsername').textContent = currentUser.username;
+    updateOnlineStatus();
+
+    // Mesajları temizle ve hazırla
+    renderMessages();
+
+    // Formu temizle
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPassword').value = '';
+}
+
+// Online göstergesi
+function updateOnlineStatus() {
+    const status = document.getElementById('onlineStatus');
+    status.textContent = currentUser.online ? '🟢 Online' : '⚫ Offline';
+}
+
+// Mesaj gönder
+function sendMessage() {
+    const input = document.getElementById('messageInput');
+    const text = input.value.trim();
+    if (!text || !currentUser) return;
+
+    const now = new Date();
+    const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+    messages.push({
+        author: currentUser.username,
+        text,
+        time,
+        reactions: {}
+    });
+
+    input.value = '';
+    renderMessages();
+}
+
+// Enter ile mesaj gönder
+function handleEnter(event) {
+    if (event.key === 'Enter') {
+        sendMessage();
+    }
+}
+
+// Mesajları render et
+function renderMessages() {
+    const container = document.getElementById('messagesContainer');
+    container.innerHTML = '';
+
+    messages.forEach((msg, index) => {
+        const reactionsHtml = Object.entries(msg.reactions || {}).map(([emoji, count]) =>
+            `<span class="reaction" onclick="toggleReaction(${index}, '${emoji}')">${emoji} ${count}</span>`
+        ).join(' ');
+
+        const messageHtml = `
+            <div class="message">
+                <strong>${msg.author}</strong> <span class="time">${msg.time}</span>
+                <p>${msg.text}</p>
+                <div>${reactionsHtml}</div>
+            </div>
+        `;
+        container.innerHTML += messageHtml;
+    });
+
+    container.scrollTop = container.scrollHeight;
+}
+
+// Tepki ekle / çıkar
+function toggleReaction(msgIndex, emoji) {
+    const msg = messages[msgIndex];
+    if (!msg.reactions[emoji]) {
+        msg.reactions[emoji] = 1;
+    } else {
+        msg.reactions[emoji] = msg.reactions[emoji] === 1 ? 0 : msg.reactions[emoji] - 1;
+        if (msg.reactions[emoji] === 0) delete msg.reactions[emoji];
+    }
+    renderMessages();
 }
