@@ -30,14 +30,22 @@ const messageInput = document.getElementById('messageInput');
 const messagesContainer = document.getElementById('messagesContainer');
 const currentUserSpan = document.getElementById('currentUser');
 
-// Şifre göster/gizle
+// Şifreyi göster/gizle
 document.querySelectorAll('.toggle-password').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const input = btn.previousElementSibling;
-    if (input.type === 'password') input.type = 'text';
-    else input.type = 'password';
-  });
+    btn.addEventListener('click', (e) => {
+        e.preventDefault(); // sayfanın kaymasını veya focus kaybını önler
+        const input = btn.previousElementSibling; // yanındaki input'u al
+        if (input.type === 'password') {
+            input.type = 'text';
+            btn.textContent = '🙈'; // göz kapalı
+        } else {
+            input.type = 'password';
+            btn.textContent = '👁️'; // göz açık
+        }
+        input.focus(); // focus'u geri ver
+    });
 });
+
 
 // Ekran geçişleri
 showRegisterBtn.addEventListener('click', () => {
