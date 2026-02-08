@@ -3,88 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MecagaChat Pro</title>
-    <!-- CSS bağlantıları daha sonra eklenecek -->
+    <title>MecagaChat Temel</title>
+    <style>
+        /* Temel stiller */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e2f;
+            color: #fff;
+        }
+        #appContainer {
+            display: flex;
+            height: 100vh;
+        }
+        #sidebar {
+            width: 250px;
+            background-color: #2c2c3e;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        #mainContent {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        #messagesContainer {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        #inputContainer {
+            display: flex;
+            padding: 10px;
+            background-color: #2c2c3e;
+        }
+        #messageInput {
+            flex: 1;
+            padding: 8px;
+            border-radius: 5px;
+            border: none;
+        }
+        #sendButton {
+            margin-left: 5px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4caf50;
+            color: #fff;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    <!-- Sol panel: sunucular ve kanallar -->
+
+<div id="appContainer">
     <div id="sidebar">
+        <h2>Sunucular</h2>
         <div id="serversList">
-            <!-- Sunucular buraya eklenecek -->
-        </div>
-        <div id="categoriesList">
-            <!-- Kategoriler ve kanallar buraya eklenecek -->
+            <!-- Sunucular buraya gelecek -->
         </div>
     </div>
-
-    <!-- Sağ panel: sohbet alanı -->
-    <div id="chatContent">
-        <div id="welcomeScreen">
-            <h2>Hoş geldiniz!</h2>
-            <p>Bir kanal seçin veya yeni bir sunucu oluşturun.</p>
-        </div>
-
+    <div id="mainContent">
         <div id="messagesContainer">
-            <!-- Mesajlar buraya eklenecek -->
+            <div class="empty-state">
+                <div class="empty-state-icon">💬</div>
+                <p>Henüz mesaj yok</p>
+            </div>
         </div>
-
-        <div id="typingIndicator" style="display:none;"></div>
-
-        <div id="messageInputContainer">
-            <input type="text" id="messageInput" placeholder="Mesaj yaz..." />
-            <button onclick="sendMessage()">Gönder</button>
-        </div>
-    </div>
-
-    <!-- Kullanıcı profili ve durum -->
-    <div id="userProfile">
-        <div id="currentUserInfo">
-            <div id="currentUserStatus"></div>
-            <div id="currentUserName">Kullanıcı Adı</div>
+        <div id="inputContainer">
+            <input type="text" id="messageInput" placeholder="Mesajınızı yazın...">
+            <button id="sendButton" onclick="sendMessage()">Gönder</button>
         </div>
     </div>
+</div>
 
-    <!-- Modaller -->
-    <div id="serverModal" class="modal"></div>
-    <div id="createChannelModal" class="modal"></div>
-    <div id="channelSettingsModal" class="modal"></div>
-    <div id="userProfileModal" class="modal"></div>
+<!-- Buraya JS ve diğer eklemeler eklenecek -->
 
-    <!-- Bildirim alanı -->
-    <div id="notificationContainer"></div>
-
-    <!-- JS bağlantıları daha sonra eklenecek -->
 </body>
-
-    <script>
-    // Kullanıcı bilgileri (simülasyon)
-    const currentUser = {
-        id: '#0001',
-        name: 'MehmetEmin',
-        online: true // true = çevrimiçi, false = çevrimdışı
-    };
-
-    // Kullanıcı adını ve durumunu göstermek için fonksiyon
-    function updateCurrentUserInfo() {
-        const nameElement = document.getElementById('currentUserName');
-        const statusElement = document.getElementById('currentUserStatus');
-
-        // Kullanıcı adını güncelle
-        nameElement.textContent = currentUser.name;
-
-        // Durum emojisi
-        const statusEmoji = currentUser.online ? '🟢' : '⚫';
-        const statusText = currentUser.online ? 'Çevrimiçi' : 'Çevrimdışı';
-
-        // Durumu göster
-        statusElement.textContent = `${statusEmoji} ${statusText}`;
-    }
-
-    // Sayfa açıldığında çalıştır
-    window.onload = function() {
-        updateCurrentUserInfo();
-    };
-</script>
-
-    
 </html>
