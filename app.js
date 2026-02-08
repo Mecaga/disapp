@@ -5,6 +5,24 @@ function showScreen(screenId) {
     document.getElementById(screenId).classList.remove('hidden');
 }
 
+// DOM hazır olduğunda event ekle
+window.addEventListener('DOMContentLoaded', () => {
+    // Welcome ekranı butonları
+    document.getElementById('btnRegister').addEventListener('click', () => showScreen('registerScreen'));
+    document.getElementById('btnLogin').addEventListener('click', () => showScreen('loginScreen'));
+
+    // Kayıt ekranı butonları
+    document.getElementById('registerBtn').addEventListener('click', registerUser);
+    document.getElementById('backFromRegister').addEventListener('click', () => showScreen('welcomeScreen'));
+
+    // Giriş ekranı butonları
+    document.getElementById('loginBtn').addEventListener('click', loginUser);
+    document.getElementById('backFromLogin').addEventListener('click', () => showScreen('welcomeScreen'));
+
+    // Mesaj formu
+    document.getElementById('messageForm').addEventListener('submit', sendMessage);
+});
+
 // Kayıt işlemi
 function registerUser() {
     const username = document.getElementById('regUsername').value.trim();
@@ -41,6 +59,7 @@ function sendMessage(event) {
     const msgDiv = document.createElement('div');
     msgDiv.textContent = input.value;
     container.appendChild(msgDiv);
+
     input.value = '';
     container.scrollTop = container.scrollHeight;
 }
