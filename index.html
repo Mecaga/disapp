@@ -3,59 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MecagaChat Pro</title>
+    <title>MecagaChat Pro | Online</title>
     <style>
-        /* Mevcut CSS kodlarını buraya yapıştırabilirsin */
-        body { font-family: sans-serif; background: #36393f; color: white; margin: 0; }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-        .modal-content { background: #2f3136; padding: 20px; border-radius: 8px; width: 300px; }
-        input { width: 100%; margin: 10px 0; padding: 10px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; cursor: pointer; background: #5865f2; color: white; border: none; border-radius: 4px; }
-        .container { display: flex; height: 100vh; }
-        .sidebar { width: 240px; background: #2f3136; display: flex; flex-direction: column; }
-        .chat-area { flex: 1; background: #36393f; display: flex; flex-direction: column; }
-        .user-area { padding: 10px; background: #292b2f; margin-top: auto; }
+        /* CSS Başlangıcı - Bölüm 2'de devam edecek */
+        :root {
+            --primary: #5865f2;
+            --secondary: #2f3136;
+            --background: #36393f;
+            --text-muted: #b9bbbe;
+            --success: #43b581;
+            --danger: #ed4245;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #202225; overflow: hidden; }
     </style>
 </head>
 <body>
+    <div id="notificationBar" style="display:none; position:fixed; top:0; width:100%; z-index:9999; padding:15px; color:white; text-align:center; font-weight:bold;"></div>
 
-    <div id="authScreen" class="modal">
-        <div class="modal-content">
-            <h3 id="authTitle">Giriş Yap</h3>
-            <input type="email" id="authEmail" placeholder="E-posta">
-            <input type="password" id="authPassword" placeholder="Şifre">
-            <div id="registerFields" style="display: none;">
-                <input type="text" id="authUsername" placeholder="Kullanıcı Adı">
+    <div id="authScreen" style="position:fixed; inset:0; background:#2f3136; z-index:9000; display:flex; align-items:center; justify-content:center;">
+        <div style="background:#36393f; padding:40px; border-radius:12px; width:400px; box-shadow:0 8px 24px rgba(0,0,0,0.5);">
+            <div style="text-align:center; margin-bottom:30px;">
+                <h1 style="color:white; font-size:24px;">MecagaChat Pro</h1>
+                <p style="color:var(--text-muted);">Hoş geldin mübarek!</p>
             </div>
-            <button id="authBtn">Giriş Yap</button>
-            <p id="toggleAuth" style="font-size: 12px; text-align: center; cursor: pointer; color: #b9bbbe;">Hesabın yok mu? Kayıt Ol</p>
+            <h3 id="authTitle" style="color:white; margin-bottom:15px;">Giriş Yap</h3>
+            <div id="registerFields" style="display:none;">
+                <label style="color:var(--text-muted); font-size:12px; font-weight:bold;">KULLANICI ADI</label>
+                <input type="text" id="authUsername" style="width:100%; padding:12px; background:#202225; border:none; color:white; margin:10px 0; border-radius:5px;">
+            </div>
+            <label style="color:var(--text-muted); font-size:12px; font-weight:bold;">E-POSTA</label>
+            <input type="email" id="authEmail" style="width:100%; padding:12px; background:#202225; border:none; color:white; margin:10px 0; border-radius:5px;">
+            <label style="color:var(--text-muted); font-size:12px; font-weight:bold;">ŞİFRE</label>
+            <input type="password" id="authPassword" style="width:100%; padding:12px; background:#202225; border:none; color:white; margin:10px 0; border-radius:5px;">
+            <button id="authBtn" style="width:100%; padding:14px; background:var(--primary); color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer; margin-top:20px;">Devam Et</button>
+            <p id="toggleAuth" style="color:#00aff4; cursor:pointer; font-size:13px; margin-top:15px; text-align:center;">Hesabın yok mu? Kayıt Ol</p>
         </div>
     </div>
 
-    <div id="mainApp" class="container" style="display: none;">
-        <div class="sidebar">
-            <div style="padding: 20px; font-weight: bold; border-bottom: 1px solid #202225;">MecagaChat</div>
-            <div id="categoriesContainer" style="padding: 10px;">
+    <div id="mainApp" style="display:none; height:100vh;">
+        <div style="width:72px; background:#202225; display:flex; flex-direction:column; align-items:center; padding:12px 0;">
+            <div style="width:48px; height:48px; background:var(--primary); border-radius:16px; display:flex; align-items:center; justify-content:center; color:white; font-size:20px; cursor:pointer;">M</div>
+            <div style="width:32px; height:2px; background:#36393f; margin:10px 0;"></div>
+            <div id="serverListIcons"></div>
+        </div>
+    <style>
+        .container { display: flex; flex: 1; }
+        .sidebar { width: 240px; background: var(--secondary); display: flex; flex-direction: column; border-right: 1px solid #202225; }
+        .chat-area { flex: 1; display: flex; flex-direction: column; background: var(--background); }
+        .sidebar-header { padding: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.2); font-weight: bold; color: white; display: flex; justify-content: space-between; align-items: center; }
+        .category-container { flex: 1; overflow-y: auto; padding: 10px; }
+        .channel-item { padding: 8px 12px; color: var(--text-muted); cursor: pointer; border-radius: 4px; margin-bottom: 2px; transition: 0.2s; display: flex; align-items: center; }
+        .channel-item:hover { background: #393c43; color: white; }
+        .channel-item.active { background: #393c43; color: white; }
+        .user-panel { padding: 10px; background: #292b2f; display: flex; align-items: center; gap: 10px; }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; }
+        .chat-header { padding: 15px; border-bottom: 1px solid #202225; color: white; display: flex; align-items: center; gap: 10px; font-weight: bold; }
+        .messages-wrapper { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+        .message-box { display: flex; gap: 15px; }
+        .msg-content { flex: 1; }
+        .msg-author { color: white; font-weight: bold; font-size: 15px; margin-bottom: 5px; }
+        .msg-text { color: #dcddde; line-height: 1.4; word-wrap: break-word; }
+        .input-container { padding: 20px; }
+        .input-wrapper { background: #40444b; border-radius: 8px; padding: 10px 15px; display: flex; align-items: center; gap: 15px; }
+        #messageInput { flex: 1; background: transparent; border: none; color: white; font-size: 15px; outline: none; }
+        .action-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 20px; transition: 0.2s; }
+        .action-btn:hover { color: white; }
+        /* Modal Stilleri */
+        .full-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 10000; display: none; align-items: center; justify-content: center; }
+        .modal-body-custom { background: var(--secondary); padding: 25px; border-radius: 8px; width: 450px; color: white; }
+    </style>
+        <div class="container">
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <span>MecagaChat Sunucusu</span>
+                    <button class="action-btn" onclick="openChannelModal()">+</button>
                 </div>
-            <div class="user-area">
-                <div id="displayUserName">Yükleniyor...</div>
-                <button onclick="logout()" style="background: transparent; font-size: 11px; text-align: left; padding: 5px 0;">Çıkış Yap</button>
+                <div class="category-container" id="channelList">
+                    </div>
+                <div class="user-panel">
+                    <div class="user-avatar" id="myAvatar">?</div>
+                    <div style="flex:1;">
+                        <div id="displayUserName" style="color:white; font-size:14px; font-weight:bold;">Yükleniyor...</div>
+                        <div style="color:var(--text-muted); font-size:12px;">Çevrimiçi</div>
+                    </div>
+                    <button class="action-btn" onclick="openProfileModal()">⚙️</button>
+                </div>
             </div>
-        </div>
-        <div class="chat-area">
-            <div style="padding: 15px; border-bottom: 1px solid #202225;"># genel</div>
-            <div id="messagesContainer" style="flex: 1; padding: 20px; overflow-y: auto;"></div>
-            <div style="padding: 20px;">
-                <input type="text" id="messageInput" placeholder="Mesaj yaz..." style="background: #40444b; border: none; color: white;">
+
+            <div class="chat-area">
+                <div class="chat-header">
+                    <span style="color:var(--text-muted); font-size:24px;">#</span>
+                    <span id="activeChannelTitle">genel</span>
+                </div>
+                <div class="messages-wrapper" id="messagesWrapper">
+                    </div>
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <button class="action-btn">⊕</button>
+                        <input type="text" id="messageInput" placeholder="Mesaj yaz...">
+                        <button class="action-btn" id="sendBtn">➤</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <div id="channelModal" class="full-modal">
+        <div class="modal-body-custom">
+            <h3>Yeni Kanal Oluştur</h3>
+            <input type="text" id="newChannelName" placeholder="kanal-adi" style="width:100%; padding:10px; margin:20px 0; background:#202225; border:none; color:white;">
+            <button onclick="createChannelFirebase()" style="background:var(--success); color:white; padding:10px; width:100%; border:none; border-radius:4px; font-weight:bold;">Oluştur</button>
+            <button onclick="closeModals()" style="background:transparent; color:white; width:100%; margin-top:10px; border:none; cursor:pointer;">İptal</button>
+        </div>
+    </div>
+
+    <div id="profileModal" class="full-modal">
+        <div class="modal-body-custom">
+            <h3>Kullanıcı Adını Değiştir</h3>
+            <input type="text" id="newNameInput" placeholder="Yeni kullanıcı adın..." style="width:100%; padding:10px; margin:20px 0; background:#202225; border:none; color:white;">
+            <button id="updateProfileBtn" style="background:var(--primary); color:white; padding:10px; width:100%; border:none; border-radius:4px; font-weight:bold;">Güncelle ve Kaydet</button>
+            <button onclick="firebaseLogout()" style="background:var(--danger); color:white; padding:10px; width:100%; border:none; border-radius:4px; font-weight:bold; margin-top:10px;">Çıkış Yap</button>
+            <button onclick="closeModals()" style="background:transparent; color:white; width:100%; margin-top:10px; border:none; cursor:pointer;">Kapat</button>
+        </div>
+    </div>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // BURAYA KENDİ BİLGİLERİNİ YAPIŞTIR
+        // FIREBASE CONFIG - BURAYA KENDİ BİLGİLERİNİ KOYDUĞUNDAN EMİN OL
         const firebaseConfig = {
             apiKey: "AIzaSyDbIFwbCiLlSLDMjaOq_lViHc_yFm9fbLw",
             authDomain: "whatsapp-a0929.firebaseapp.com",
@@ -67,49 +144,133 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        const authBtn = document.getElementById('authBtn');
-        const toggleAuth = document.getElementById('toggleAuth');
-        const registerFields = document.getElementById('registerFields');
-        let isRegisterMode = false;
+        let activeChannel = "genel";
+        let isRegister = false;
 
-        // Mod Değiştir (Kayıt/Giriş)
-        toggleAuth.onclick = () => {
-            isRegisterMode = !isRegisterMode;
-            document.getElementById('authTitle').innerText = isRegisterMode ? "Kayıt Ol" : "Giriş Yap";
-            registerFields.style.display = isRegisterMode ? "block" : "none";
-            authBtn.innerText = isRegisterMode ? "Kayıt Ol" : "Giriş Yap";
-            toggleAuth.innerText = isRegisterMode ? "Hesabın var mı? Giriş Yap" : "Hesabın yok mu? Kayıt Ol";
+        // BİLDİRİM FONKSİYONU
+        window.notify = (msg, type = "info") => {
+            const bar = document.getElementById('notificationBar');
+            bar.innerText = msg;
+            bar.style.display = "block";
+            bar.style.background = type === "error" ? "#ed4245" : "#43b581";
+            setTimeout(() => bar.style.display = "none", 3000);
         };
 
-        // Giriş/Kayıt İşlemi
-        authBtn.onclick = async () => {
+        // GİRİŞ/KAYIT GEÇİŞİ
+        document.getElementById('toggleAuth').onclick = () => {
+            isRegister = !isRegister;
+            document.getElementById('authTitle').innerText = isRegister ? "Kayıt Ol" : "Giriş Yap";
+            document.getElementById('registerFields').style.display = isRegister ? "block" : "none";
+            document.getElementById('toggleAuth').innerText = isRegister ? "Zaten hesabın var mı? Giriş Yap" : "Hesabın yok mu? Kayıt Ol";
+        };
+
+        // AUTH İŞLEMİ
+        document.getElementById('authBtn').onclick = async () => {
             const email = document.getElementById('authEmail').value;
-            const password = document.getElementById('authPassword').value;
-            const username = document.getElementById('authUsername').value;
+            const pass = document.getElementById('authPassword').value;
+            const uname = document.getElementById('authUsername').value;
 
             try {
-                if (isRegisterMode) {
-                    const res = await createUserWithEmailAndPassword(auth, email, password);
-                    await updateProfile(res.user, { displayName: username });
-                    alert("Kayıt başarılı!");
+                if(isRegister) {
+                    const res = await createUserWithEmailAndPassword(auth, email, pass);
+                    await updateProfile(res.user, { displayName: uname });
+                    notify("Hoş geldin mübarek!");
                 } else {
-                    await signInWithEmailAndPassword(auth, email, password);
+                    await signInWithEmailAndPassword(auth, email, pass);
+                    notify("Giriş yapıldı.");
                 }
-            } catch (err) {
-                alert("Hata: " + err.message);
+            } catch (err) { notify(err.message, "error"); }
+        };
+
+        // PROFİL GÜNCELLEME
+        document.getElementById('updateProfileBtn').onclick = async () => {
+            const newName = document.getElementById('newNameInput').value;
+            if(newName && auth.currentUser) {
+                await updateProfile(auth.currentUser, { displayName: newName });
+                notify("Kullanıcı adı güncellendi!");
+                location.reload();
             }
         };
 
-        // Çıkış Yap
-        window.logout = () => signOut(auth);
+        window.firebaseLogout = () => signOut(auth);
+        window.closeModals = () => document.querySelectorAll('.full-modal').forEach(m => m.style.display = "none");
+        window.openChannelModal = () => document.getElementById('channelModal').style.display = "flex";
+        window.openProfileModal = () => document.getElementById('profileModal').style.display = "flex";
+        // KANAL OLUŞTURMA
+        window.createChannelFirebase = async () => {
+            const name = document.getElementById('newChannelName').value.trim();
+            if(name) {
+                await addDoc(collection(db, "channels"), { name: name, createdBy: auth.currentUser.uid });
+                closeModals();
+                notify("Kanal oluşturuldu!");
+            }
+        };
 
-        // Durum Takibi
+        // MESAJ GÖNDERME
+        const sendMsg = async () => {
+            const input = document.getElementById('messageInput');
+            if(input.value.trim() && auth.currentUser) {
+                await addDoc(collection(db, "messages"), {
+                    text: input.value,
+                    author: auth.currentUser.displayName || "İsimsiz",
+                    channel: activeChannel,
+                    timestamp: serverTimestamp()
+                });
+                input.value = "";
+            }
+        };
+        document.getElementById('sendBtn').onclick = sendMsg;
+        document.getElementById('messageInput').onkeypress = (e) => { if(e.key === 'Enter') sendMsg(); };
+
+        // KANALLARI DİNLE
+        onSnapshot(collection(db, "channels"), (snap) => {
+            const list = document.getElementById('channelList');
+            list.innerHTML = `<div class="channel-item active" onclick="switchChan('genel')"># genel</div>`;
+            snap.forEach(doc => {
+                const data = doc.data();
+                list.innerHTML += `<div class="channel-item" onclick="switchChan('${data.name}')"># ${data.name}</div>`;
+            });
+        });
+
+        window.switchChan = (name) => {
+            activeChannel = name;
+            document.getElementById('activeChannelTitle').innerText = name;
+            loadMessages();
+        };
+
+        // MESAJLARI DİNLE
+        let msgUnsubscribe;
+        function loadMessages() {
+            if(msgUnsubscribe) msgUnsubscribe();
+            const q = query(collection(db, "messages"), where("channel", "==", activeChannel), orderBy("timestamp", "asc"));
+            msgUnsubscribe = onSnapshot(q, (snap) => {
+                const wrapper = document.getElementById('messagesWrapper');
+                wrapper.innerHTML = "";
+                snap.forEach(doc => {
+                    const m = doc.data();
+                    wrapper.innerHTML += `
+                        <div class="message-box">
+                            <div class="user-avatar">${m.author.charAt(0)}</div>
+                            <div class="msg-content">
+                                <div class="msg-author">${m.author}</div>
+                                <div class="msg-text">${m.text}</div>
+                            </div>
+                        </div>`;
+                });
+                wrapper.scrollTop = wrapper.scrollHeight;
+            });
+        }
+
+        // DURUM KONTROLÜ
         onAuthStateChanged(auth, (user) => {
-            if (user) {
+            if(user) {
                 document.getElementById('authScreen').style.display = "none";
                 document.getElementById('mainApp').style.display = "flex";
                 document.getElementById('displayUserName').innerText = user.displayName || user.email;
+                document.getElementById('myAvatar').innerText = (user.displayName || "U").charAt(0).toUpperCase();
+                loadMessages();
             } else {
                 document.getElementById('authScreen').style.display = "flex";
                 document.getElementById('mainApp').style.display = "none";
