@@ -2,31 +2,48 @@ import { auth } from './firebase-config.js';
 import { 
     signInWithEmailAndPassword, 
     createUserWithEmailAndPassword, 
+    onAuthStateChanged, 
     updateProfile, 
-    onAuthStateChanged 
+    signOut 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// Kullanıcı Adı Değiştirme (Senin istediğin özellik)
-export async function changeUserName(newName) {
-    if (auth.currentUser) {
-        try {
-            await updateProfile(auth.currentUser, { displayName: newName });
-            return true;
-        } catch (error) {
-            console.error("İsim değiştirme hatası:", error);
-            return false;
-        }
-    }
-}
-
-// Oturum Durumunu Kontrol Et
-export function monitorAuthState(onUserIn, onUserOut) {
+// OTURUM DURUMU TAKİBİ
+export function initAuth(callback) {
     onAuthStateChanged(auth, (user) => {
+        const authScreen = document.getElementById('authScreen');
+        const mainApp = document.getElementById('mainApp');
+        
         if (user) {
-            onUserIn(user);
+            authScreen.style.display = "none";
+            mainApp.style.display = "flex";
+            callback(user);
         } else {
-            onUserOut();
+            authScreen.style.display = "flex";
+            mainApp.style.display = "none";
         }
     });
 }
 
+// KAYIT FONKSİYONU
+export async function registerUser(email, password, username) {
+    try {
+        const res = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(res.user, { displayName: username });
+        return { success: true };
+    } catch (error) {
+        return { success: false, message: error.message };
+    }
+}
+
+// GİRİŞ FONKSİYONU
+export async function loginUser(email, password) {
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+        return { success: true };
+    } catch (error) {
+        return { success: false, message: error.message };
+    }
+}
+
+// ÇIKIŞ
+export const logout = () => signOut(auth);
