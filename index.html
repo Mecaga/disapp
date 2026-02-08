@@ -1,52 +1,65 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MecagaChat</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MecagaChat Online</title>
+
+<!-- CSS linki -->
+<link rel="stylesheet" href="style.css">
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.17.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.17.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.17.0/firebase-database-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "BURAYA_YAPIŞTIR",
+    authDomain: "BURAYA_YAPIŞTIR",
+    databaseURL: "BURAYA_YAPIŞTIR",
+    projectId: "BURAYA_YAPIŞTIR",
+    storageBucket: "BURAYA_YAPIŞTIR",
+    messagingSenderId: "BURAYA_YAPIŞTIR",
+    appId: "BURAYA_YAPIŞTIR"
+  };
+  firebase.initializeApp(firebaseConfig);
+</script>
 </head>
 <body>
-    <div id="app">
-        <div class="welcome-screen">
-            <h1>MecagaChat'e Hoşgeldiniz! 🎉</h1>
-            <!-- Kayıt Formu -->
-            <div class="form-container" id="registerForm">
-                <h2>Kayıt Ol</h2>
-                <input type="text" id="registerUsername" placeholder="Kullanıcı Adı">
-                <input type="email" id="registerEmail" placeholder="Email">
-                <div class="password-wrapper">
-                    <input type="password" id="registerPassword" placeholder="Şifre">
-                    <button class="toggle-password">👁️</button>
-                </div>
-                <button id="registerBtn">Kayıt Ol</button>
-                <p>Zaten hesabınız var mı? <span id="showLogin">Giriş Yap</span></p>
-            </div>
+<div id="welcomeScreen">
+  <h1>MecagaChat’e Hoşgeldiniz 🎉</h1>
 
-            <!-- Giriş Formu -->
-            <div class="form-container" id="loginForm" style="display:none;">
-                <h2>Giriş Yap</h2>
-                <input type="email" id="loginEmail" placeholder="Email">
-                <div class="password-wrapper">
-                    <input type="password" id="loginPassword" placeholder="Şifre">
-                    <button class="toggle-password">👁️</button>
-                </div>
-                <button id="loginBtn">Giriş Yap</button>
-                <p>Hesabınız yok mu? <span id="showRegister">Kayıt Ol</span></p>
-            </div>
-        </div>
-
-        <!-- Chat Ekranı -->
-        <div class="chat-screen" id="chatScreen" style="display:none;">
-            <h2>Hoşgeldiniz, <span id="currentUser"></span>!</h2>
-            <div id="messagesContainer" class="messages"></div>
-            <div class="message-input">
-                <input type="text" id="messageInput" placeholder="Mesaj yaz...">
-                <button id="sendBtn">Gönder</button>
-            </div>
-        </div>
+  <div id="registerForm">
+    <h2>Kayıt Ol</h2>
+    <input type="text" id="regUsername" placeholder="Kullanıcı Adı">
+    <input type="email" id="regEmail" placeholder="E-mail">
+    <div class="passwordWrapper">
+      <input type="password" id="regPassword" placeholder="Şifre">
+      <button type="button" id="toggleRegPassword">👁️</button>
     </div>
+    <button onclick="handleRegister()">Kayıt Ol</button>
+  </div>
 
-    <script src="app.js"></script>
+  <div id="loginForm">
+    <h2>Giriş Yap</h2>
+    <input type="email" id="loginEmail" placeholder="E-mail">
+    <div class="passwordWrapper">
+      <input type="password" id="loginPassword" placeholder="Şifre">
+      <button type="button" id="toggleLoginPassword">👁️</button>
+    </div>
+    <button onclick="handleLogin()">Giriş Yap</button>
+  </div>
+</div>
+
+<div id="chatScreen" style="display:none;">
+  <h2>Chat</h2>
+  <div id="messagesContainer"></div>
+  <input type="text" id="messageInput" placeholder="Mesaj yaz..." onkeypress="enterPress(event)">
+  <button onclick="sendMessage()">Gönder</button>
+  <button onclick="logoutUser()">Çıkış Yap</button>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
