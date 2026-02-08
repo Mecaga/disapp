@@ -1,68 +1,54 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+    <meta charset="UTF-8">
+    <title>MecagaChat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MecagaChat</title>
+    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="welcomeScreen">
+        <h1>MecagaChat Hoşgeldiniz! 🎉</h1>
 
-    <script>
-  // Firebase initialize
-  const app = firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-</script>
-
-
-    <!-- Welcome Ekranı -->
-    <div id="welcomeScreen" class="screen">
-        <h1>MecagaChat Hoşgeldiniz!</h1>
-        <div>
-            <button id="btnRegister">Kayıt Ol</button>
-            <button id="btnLogin">Giriş Yap</button>
+        <!-- Kayıt formu -->
+        <div id="registerScreen">
+            <h2>Kayıt Ol</h2>
+            <input type="text" id="regUsername" placeholder="Kullanıcı Adı">
+            <input type="email" id="regEmail" placeholder="Email">
+            <div class="password-wrapper">
+                <input type="password" id="regPassword" placeholder="Şifre">
+                <button type="button" class="toggle-password">👁️</button>
+            </div>
+            <button id="registerBtn">Kayıt Ol</button>
         </div>
+
+        <!-- Giriş formu -->
+        <div id="loginScreen" style="display:none;">
+            <h2>Giriş Yap</h2>
+            <input type="email" id="loginEmail" placeholder="Email">
+            <div class="password-wrapper">
+                <input type="password" id="loginPassword" placeholder="Şifre">
+                <button type="button" class="toggle-password">👁️</button>
+            </div>
+            <button id="loginBtn">Giriş Yap</button>
+        </div>
+
+        <button id="switchToLogin">Zaten kayıtlı mısın? Giriş Yap</button>
+        <button id="switchToRegister" style="display:none;">Kayıt Ol</button>
     </div>
 
-    <!-- Kayıt Ekranı -->
-<div id="registerScreen" class="hidden screen">
-    <h2>Kayıt Ol</h2>
-    <input type="text" id="regUsername" placeholder="Kullanıcı Adı">
-    <input type="email" id="regEmail" placeholder="Email">
-    <div class="password-container">
-        <input type="password" id="regPassword" placeholder="Şifre">
-        <button type="button" class="toggle-password" data-target="regPassword">👁️</button>
-    </div>
-    <button id="registerBtn">Kayıt Ol</button>
-    <button id="backFromRegister">Geri</button>
-</div>
-
-<!-- Giriş Ekranı -->
-<div id="loginScreen" class="hidden screen">
-    <h2>Giriş Yap</h2>
-    <input type="email" id="loginEmail" placeholder="Email">
-    <div class="password-container">
-        <input type="password" id="loginPassword" placeholder="Şifre">
-        <button type="button" class="toggle-password" data-target="loginPassword">👁️</button>
-    </div>
-    <button id="loginBtn">Giriş Yap</button>
-    <button id="backFromLogin">Geri</button>
-</div>
-
-
-    <!-- Chat Ekranı -->
-    <div id="chatScreen" class="hidden screen">
-        <div id="chatHeader">MecagaChat</div>
+    <!-- Chat ekranı -->
+    <div id="chatScreen" style="display:none;">
+        <h2 id="chatWelcome"></h2>
         <div id="messagesContainer"></div>
-        <form id="messageForm">
-            <input type="text" id="messageInput" placeholder="Mesajınızı yazın...">
-            <button type="submit">Gönder</button>
-        </form>
+        <input type="text" id="messageInput" placeholder="Mesaj yaz...">
+        <button id="sendBtn">Gönder</button>
     </div>
 
     <script src="app.js"></script>
