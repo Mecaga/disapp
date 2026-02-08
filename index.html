@@ -1,55 +1,58 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MecagaChat</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MecagaChat Pro</title>
+    <!-- CSS bağlantıları daha sonra eklenecek -->
 </head>
 <body>
-
-<!-- Giriş Ekranı -->
-<div id="loginScreen" class="screen">
-  <h2>Giriş Yap</h2>
-  <input type="text" id="usernameInput" placeholder="Kullanıcı adını gir">
-  <button onclick="login()">Giriş Yap</button>
-</div>
-
-<!-- Chat Uygulama Ekranı -->
-<div id="chatApp" class="screen" style="display:none;">
-  <div id="header">
-    <div id="currentUser"></div>
-    <button onclick="logout()">Çıkış Yap</button>
-  </div>
-
-  <div id="serversList">
-    <!-- Sunucular buraya renderlanacak -->
-  </div>
-
-  <div id="chatContent">
-    <div id="categoriesList">
-      <!-- Kategoriler buraya -->
-    </div>
-    <div id="messagesContainer"></div>
-
-    <!-- Mesaj yazma alanı -->
-    <div id="messageInputContainer">
-      <input type="text" id="messageInput" placeholder="Mesaj yaz..." oninput="typing()">
-      <button onclick="sendMessage()">Gönder</button>
+    <!-- Sol panel: sunucular ve kanallar -->
+    <div id="sidebar">
+        <div id="serversList">
+            <!-- Sunucular buraya eklenecek -->
+        </div>
+        <div id="categoriesList">
+            <!-- Kategoriler ve kanallar buraya eklenecek -->
+        </div>
     </div>
 
-    <!-- Yazıyor göstergesi -->
-    <div id="typingIndicator" style="display:none;"></div>
-  </div>
-</div>
+    <!-- Sağ panel: sohbet alanı -->
+    <div id="chatContent">
+        <div id="welcomeScreen">
+            <h2>Hoş geldiniz!</h2>
+            <p>Bir kanal seçin veya yeni bir sunucu oluşturun.</p>
+        </div>
 
-<script src="app.js"></script>
+        <div id="messagesContainer">
+            <!-- Mesajlar buraya eklenecek -->
+        </div>
 
-  <!-- Kullanıcı Bilgisi ve Online Göstergesi -->
-<div id="currentUserInfo" style="position: fixed; bottom: 10px; right: 10px; background: #2f3136; color: white; padding: 10px 15px; border-radius: 8px; display: flex; align-items: center; gap: 8px; font-family: sans-serif;">
-    <div id="currentUserStatus" style="width: 12px; height: 12px; border-radius: 50%; background: gray;"></div>
-    <div id="currentUserName">Kullanıcı Adı</div>
-</div>
+        <div id="typingIndicator" style="display:none;"></div>
 
+        <div id="messageInputContainer">
+            <input type="text" id="messageInput" placeholder="Mesaj yaz..." />
+            <button onclick="sendMessage()">Gönder</button>
+        </div>
+    </div>
+
+    <!-- Kullanıcı profili ve durum -->
+    <div id="userProfile">
+        <div id="currentUserInfo">
+            <div id="currentUserStatus"></div>
+            <div id="currentUserName">Kullanıcı Adı</div>
+        </div>
+    </div>
+
+    <!-- Modaller -->
+    <div id="serverModal" class="modal"></div>
+    <div id="createChannelModal" class="modal"></div>
+    <div id="channelSettingsModal" class="modal"></div>
+    <div id="userProfileModal" class="modal"></div>
+
+    <!-- Bildirim alanı -->
+    <div id="notificationContainer"></div>
+
+    <!-- JS bağlantıları daha sonra eklenecek -->
 </body>
 </html>
