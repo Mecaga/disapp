@@ -3,43 +3,67 @@ import { ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/fi
 
 let activeChannel = "genel";
 let messages = {};
+let currentUser = null;
 
-listenMessages(activeChannel);
+/* Kullanıcı giriş */
 
-function renderMessages(channelId) {
+function login() {
 
-    const container = document.getElementById("messagesContainer");
-    const channelMessages = messages[channelId] || [];
+    const username = document.getElementById("usernameInput").value.trim();
 
-    container.innerHTML = channelMessages.map(msg => `
-        <div class="message">
-            <b>${msg.author}</b>: ${msg.text}
-            <span style="font-size:12px">${msg.time}</span>
-        </div>
-    `).join("");
+    if (!username) return alert("Kullanıcı adı gir!");
 
+    currentUser = username;
+    localStorage.setItem("username", username);
+
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("chatApp").style.display = "block";
+
+    listenMessages(activeChannel);
 }
 
-export function sendMessage() {
+window.login = login;
+
+/* Sayfa açılınca kullanıcı kontrol */
+
+window.onload = () => {
+
+    const savedUser = localStorage.getItem("username");
+
+    if (savedUser) {
+
+        currentUser = savedUser;
+
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("chatApp").style.display = "block";
+
+        listenMessages(activeChannel);
+    }
+};
+
+/* Mesaj gönder */
+
+function sendMessage() {
 
     const input = document.getElementById("messageInput");
     const text = input.value.trim();
 
-    if (!text) return;
+    if (!text || !currentUser) return;
 
     const messageRef = ref(db, "messages/" + activeChannel);
 
     push(messageRef, {
-    author: currentUser,
-    text: text,
-    time: new Date().toLocaleTimeString()
-});
-
+        author: currentUser,
+        text: text,
+        time: new Date().toLocaleTimeString()
+    });
 
     input.value = "";
 }
 
 window.sendMessage = sendMessage;
+
+/* Mesajları dinle */
 
 function listenMessages(channelId) {
 
@@ -57,40 +81,19 @@ function listenMessages(channelId) {
     });
 }
 
+/* Mesajları ekrana bas */
 
-let currentUser = null;
+function renderMessages(channelId) {
 
-function login() {
+    const container = document.getElementById("messagesContainer");
+    const channelMessages = messages[channelId] || [];
 
-    const username = document.getElementById("usernameInput").value.trim();
+    container.innerHTML = channelMessages.map(msg => `
+        <div class="message">
+            <b>${msg.author}</b>: ${msg.text}
+            <span class="time">${msg.time}</span>
+        </div>
+    `).join("");
 
-    if (!username) return alert("Kullanıcı adı gir!");
-
-    currentUser = username;
-
-    // Telefon kapansa bile kayıtlı kalır
-    localStorage.setItem("username", username);
-
-    document.getElementById("loginScreen").style.display = "none";
-    document.getElementById("chatApp").style.display = "block";
+    container.scrollTop = container.scrollHeight;
 }
-
-window.login = login;
-
-window.onload = () => {
-
-    const savedUser = localStorage.getItem("username");
-
-    if (savedUser) {
-        currentUser = savedUser;
-        document.getElementById("loginScreen").style.display = "none";
-        document.getElementById("chatApp").style.display = "block";
-    }
-
-};
-container.innerHTML = channelMessages.map(msg => `
-    <div class="message">
-        <b>${msg.author}</b>: ${msg.text}
-        <span style="font-size:12px">${msg.time}</span>
-    </div>
-`).join("");
