@@ -1,42 +1,34 @@
-import { auth, db } from './firebase-config.js';
-import { changeUserName, monitorAuthState } from './auth.js';
-import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { auth } from './firebase-config.js';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// Kullanıcı giriş yaptığında arayüzü güncelle
-monitorAuthState(
-    (user) => {
-        document.getElementById('authScreen').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'flex';
-        document.querySelector('.user-name').textContent = user.displayName || "Yeni Kullanıcı";
-        if(user.displayName) {
-            document.querySelector('.user-avatar').textContent = user.displayName.charAt(0).toUpperCase();
-        }
-    },
-    () => {
-        document.getElementById('authScreen').style.display = 'flex';
-        document.getElementById('mainApp').style.display = 'none';
-    }
-);
+const authBtn = document.getElementById('authBtn');
+const toggleAuth = document.getElementById('toggleAuth');
+let isRegisterMode = false; // Başlangıçta giriş modunda
 
-// Profil Kaydet Butonu (İsim Değiştirme)
-document.getElementById('saveProfileBtn').addEventListener('click', async () => {
-    const newName = document.getElementById('customStatus').value; // Input ID'si
-    const success = await changeUserName(newName);
-    if(success) {
-        alert("Profil güncellendi!");
-        location.reload();
-    }
+// Giriş ve Kayıt Arasında Geçiş Yap
+toggleAuth.addEventListener('click', () => {
+    isRegisterMode = !isRegisterMode;
+    document.getElementById('authTitle').textContent = isRegisterMode ? "Kayıt Ol" : "Giriş Yap";
+    document.getElementById('registerFields').style.display = isRegisterMode ? "block" : "none";
+    authBtn.textContent = isRegisterMode ? "Kayıt Ol" : "Giriş Yap";
+    toggleAuth.textContent = isRegisterMode ? "Hesabın var mı? Giriş Yap" : "Hesabın yok mu? Kayıt Ol";
 });
 
-// Mesaj Gönderme Fonksiyonu
-window.sendMessage = async () => {
-    const text = document.getElementById('messageInput').value;
-    if(text.trim() !== "" && auth.currentUser) {
-        await addDoc(collection(db, "messages"), {
-            text: text,
-            author: auth.currentUser.displayName || auth.currentUser.email,
-            timestamp: serverTimestamp()
-        });
-        document.getElementById('messageInput').value = "";
+// Butona Basıldığında İşlem Yap
+authBtn.addEventListener('click', async () => {
+    const email = document.getElementById('authEmail').value;
+    const password = document.getElementById('authPassword').value;
+
+    try {
+        if (isRegisterMode) {
+            // KAYIT OLMA
+            await createUserWithEmailAndPassword(auth, email, password);
+            alert("Başarıyla kayıt oldun!");
+        } else {
+            // GİRİŞ YAPMA
+            await signInWithEmailAndPassword(auth, email, password);
+        }
+    } catch (error) {
+        alert("Hata: " + error.message);
     }
-};
+});
