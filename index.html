@@ -4,10 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MecagaChat</title>
-
 <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <!-- Giriş ekranı -->
@@ -19,18 +17,14 @@
 
 <!-- Chat ekranı -->
 <div id="chatApp" style="display:none;">
-
+    <h3>Hoşgeldin, <span id="currentUser"></span>!</h3>
     <div id="messagesContainer"></div>
-
     <div class="message-input">
         <input id="messageInput" placeholder="Mesaj yaz...">
         <button onclick="sendMessage()">Gönder</button>
     </div>
-
 </div>
 
-<script type="module" src="firebase.js"></script>
-<script type="module" src="app.js"></script>
-
+<script src="app.js"></script>
 </body>
 </html>
