@@ -7,43 +7,46 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Karşılama / Giriş Kayıt Ekranı -->
-    <div id="welcomeScreen" class="screen">
-        <h1>MecagaChat'e Hoşgeldiniz! 🎉</h1>
-        
-        <!-- Kayıt Formu -->
-        <div id="registerForm">
+    <div id="app">
+
+        <!-- Açılış ekranı -->
+        <div id="welcomeScreen">
+            <h1>MecagaChat’e Hoş Geldiniz! 🎉</h1>
+            <div id="welcomeButtons">
+                <button id="showRegisterBtn">Kayıt Ol</button>
+                <button id="showLoginBtn">Giriş Yap</button>
+            </div>
+        </div>
+
+        <!-- Kayıt ekranı -->
+        <div id="registerScreen" class="hidden">
             <h2>Kayıt Ol</h2>
             <input type="text" id="regUsername" placeholder="Kullanıcı Adı">
             <input type="email" id="regEmail" placeholder="Gmail">
             <input type="password" id="regPassword" placeholder="Şifre">
-            <button onclick="registerUser()">Kayıt Ol</button>
+            <button id="registerBtn">Kayıt Ol</button>
         </div>
 
-        <hr>
-
-        <!-- Giriş Formu -->
-        <div id="loginForm">
+        <!-- Giriş ekranı -->
+        <div id="loginScreen" class="hidden">
             <h2>Giriş Yap</h2>
             <input type="email" id="loginEmail" placeholder="Gmail">
             <input type="password" id="loginPassword" placeholder="Şifre">
-            <button onclick="loginUser()">Giriş Yap</button>
-        </div>
-    </div>
-
-    <!-- Chat Ekranı (Başlangıçta gizli) -->
-    <div id="chatScreen" class="screen" style="display:none;">
-        <div id="userInfo">
-            <span id="displayUsername"></span>
-            <span id="onlineStatus" class="online-indicator"></span>
+            <button id="loginBtn">Giriş Yap</button>
         </div>
 
-        <div id="messagesContainer"></div>
-
-        <div id="messageInputContainer">
-            <input type="text" id="messageInput" placeholder="Mesaj yaz..." onkeypress="handleEnter(event)">
-            <button onclick="sendMessage()">Gönder</button>
+        <!-- Sohbet ekranı -->
+        <div id="chatScreen" class="hidden">
+            <div id="chatHeader">
+                <span id="currentUser"></span> • Online
+            </div>
+            <div id="messagesContainer"></div>
+            <div id="messageInputContainer">
+                <input type="text" id="messageInput" placeholder="Mesaj yaz...">
+                <button id="sendBtn">Gönder</button>
+            </div>
         </div>
+
     </div>
 
     <script src="app.js"></script>
