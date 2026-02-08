@@ -77,3 +77,43 @@ document.querySelectorAll('.toggle-password').forEach(btn => {
         }
     });
 });
+
+// Kayıt ol
+document.getElementById('registerBtn').addEventListener('click', () => {
+    const username = document.getElementById('regUsername').value.trim();
+    const email = document.getElementById('regEmail').value.trim().replace('.', ','); // Firebase key uyumu
+    const password = document.getElementById('regPassword').value.trim();
+
+    if (!username || !email || !password) return alert('Tüm alanları doldur!');
+
+    db.ref('users/' + email).get().then(snapshot => {
+        if (snapshot.exists()) {
+            alert('Bu email zaten kayıtlı!');
+        } else {
+            db.ref('users/' + email).set({
+                username: username,
+                password: password,
+                online: true
+            });
+            alert('Kayıt başarılı!');
+            showLoginScreen();
+        }
+    });
+});
+
+// Giriş yap
+document.getElementById('loginBtn').addEventListener('click', () => {
+    const email = document.getElementById('loginEmail').value.trim().replace('.', ',');
+    const password = document.getElementById('loginPassword').value.trim();
+
+    db.ref('users/' + email).get().then(snapshot => {
+        if (!snapshot.exists()) return alert('Kayıt bulunamadı!');
+        const data = snapshot.val();
+        if (data.password !== password) return alert('Şifre yanlış!');
+        
+        // Online yap
+        db.ref('users/' + email + '/online').set(true);
+        alert(`Hoş geldin ${data.username}!`);
+        showChatScreen(data.username, email); // chat ekranını açacağız
+    });
+});
