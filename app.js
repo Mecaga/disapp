@@ -1,119 +1,123 @@
-// Ekran geçişi
-function showScreen(screenId) {
-    document.querySelectorAll('#welcomeScreen, #registerScreen, #loginScreen, #chatScreen')
-        .forEach(div => div.classList.add('hidden'));
-    document.getElementById(screenId).classList.remove('hidden');
-}
+// Kullanıcı verisi
+let users = [];
+let currentUser = null;
+let messages = [];
 
-// DOM hazır olduğunda event ekle
-window.addEventListener('DOMContentLoaded', () => {
-    // Welcome ekranı butonları
-    document.getElementById('btnRegister').addEventListener('click', () => showScreen('registerScreen'));
-    document.getElementById('btnLogin').addEventListener('click', () => showScreen('loginScreen'));
+// Ekranlar
+const welcomeScreen = document.getElementById('welcomeScreen');
+const registerScreen = document.getElementById('registerScreen');
+const loginScreen = document.getElementById('loginScreen');
+const chatScreen = document.getElementById('chatScreen');
 
-    // Kayıt ekranı butonları
-    document.getElementById('registerBtn').addEventListener('click', registerUser);
-    document.getElementById('backFromRegister').addEventListener('click', () => showScreen('welcomeScreen'));
+// Butonlar
+const showRegisterBtn = document.getElementById('showRegister');
+const showLoginBtn = document.getElementById('showLogin');
+const backToWelcome1 = document.getElementById('backToWelcome1');
+const backToWelcome2 = document.getElementById('backToWelcome2');
+const registerBtn = document.getElementById('registerBtn');
+const loginBtn = document.getElementById('loginBtn');
+const sendMessageBtn = document.getElementById('sendMessageBtn');
 
-    // Giriş ekranı butonları
-    document.getElementById('loginBtn').addEventListener('click', loginUser);
-    document.getElementById('backFromLogin').addEventListener('click', () => showScreen('welcomeScreen'));
+// Inputlar
+const regUsername = document.getElementById('regUsername');
+const regEmail = document.getElementById('regEmail');
+const regPassword = document.getElementById('regPassword');
 
-    // Mesaj formu
-    document.getElementById('messageForm').addEventListener('submit', sendMessage);
-});
+const loginEmail = document.getElementById('loginEmail');
+const loginPassword = document.getElementById('loginPassword');
 
-// Kayıt işlemi
-function registerUser() {
-    const username = document.getElementById('regUsername').value.trim();
-    const email = document.getElementById('regEmail').value.trim();
-    const password = document.getElementById('regPassword').value.trim();
+const messageInput = document.getElementById('messageInput');
+const messagesContainer = document.getElementById('messagesContainer');
+const currentUserSpan = document.getElementById('currentUser');
 
-    if (!username || !email || !password) return alert("Tüm alanları doldurun!");
-
-    localStorage.setItem('user', JSON.stringify({username, email, password}));
-    alert("Kayıt başarılı! Giriş ekranına yönlendiriliyorsunuz.");
-    showScreen('loginScreen');
-}
-
-// Giriş işlemi
-function loginUser() {
-    const email = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPassword').value.trim();
-
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (!user) return alert("Kayıt bulunamadı!");
-    if (user.email !== email || user.password !== password) return alert("Email veya şifre yanlış!");
-
-    alert(`Hoşgeldin, ${user.username}!`);
-    showScreen('chatScreen');
-}
-
-// Mesaj gönderme
-function sendMessage(event) {
-    event.preventDefault();
-    const input = document.getElementById('messageInput');
-    if (!input.value) return;
-
-    const container = document.getElementById('messagesContainer');
-    const msgDiv = document.createElement('div');
-    msgDiv.textContent = input.value;
-    container.appendChild(msgDiv);
-
-    input.value = '';
-    container.scrollTop = container.scrollHeight;
-}
-// Şifre göz toggler
+// Şifre göster/gizle
 document.querySelectorAll('.toggle-password').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const targetId = btn.getAttribute('data-target');
-        const input = document.getElementById(targetId);
-        if (input.type === 'password') {
-            input.type = 'text';
-            btn.textContent = '🙈';
-        } else {
-            input.type = 'password';
-            btn.textContent = '👁️';
-        }
-    });
+  btn.addEventListener('click', () => {
+    const input = btn.previousElementSibling;
+    if (input.type === 'password') input.type = 'text';
+    else input.type = 'password';
+  });
 });
 
-// Kayıt ol
-document.getElementById('registerBtn').addEventListener('click', () => {
-    const username = document.getElementById('regUsername').value.trim();
-    const email = document.getElementById('regEmail').value.trim().replace('.', ','); // Firebase key uyumu
-    const password = document.getElementById('regPassword').value.trim();
-
-    if (!username || !email || !password) return alert('Tüm alanları doldur!');
-
-    db.ref('users/' + email).get().then(snapshot => {
-        if (snapshot.exists()) {
-            alert('Bu email zaten kayıtlı!');
-        } else {
-            db.ref('users/' + email).set({
-                username: username,
-                password: password,
-                online: true
-            });
-            alert('Kayıt başarılı!');
-            showLoginScreen();
-        }
-    });
+// Ekran geçişleri
+showRegisterBtn.addEventListener('click', () => {
+  welcomeScreen.classList.add('hidden');
+  registerScreen.classList.remove('hidden');
 });
 
-// Giriş yap
-document.getElementById('loginBtn').addEventListener('click', () => {
-    const email = document.getElementById('loginEmail').value.trim().replace('.', ',');
-    const password = document.getElementById('loginPassword').value.trim();
-
-    db.ref('users/' + email).get().then(snapshot => {
-        if (!snapshot.exists()) return alert('Kayıt bulunamadı!');
-        const data = snapshot.val();
-        if (data.password !== password) return alert('Şifre yanlış!');
-        
-        // Online yap
-        db.ref('users/' + email + '/online').set(true);
-        alert(`Hoş geldin ${data.username}!`);
-        showChatScreen(data.username, email); // chat ekranını açacağız
-    });
+showLoginBtn.addEventListener('click', () => {
+  welcomeScreen.classList.add('hidden');
+  loginScreen.classList.remove('hidden');
 });
+
+backToWelcome1.addEventListener('click', () => {
+  registerScreen.classList.add('hidden');
+  welcomeScreen.classList.remove('hidden');
+});
+
+backToWelcome2.addEventListener('click', () => {
+  loginScreen.classList.add('hidden');
+  welcomeScreen.classList.remove('hidden');
+});
+
+// Kayıt
+registerBtn.addEventListener('click', () => {
+  const username = regUsername.value.trim();
+  const email = regEmail.value.trim();
+  const password = regPassword.value.trim();
+
+  if (!username || !email || !password) {
+    alert('Lütfen tüm alanları doldurun!');
+    return;
+  }
+
+  // Aynı e-mail var mı
+  if (users.find(u => u.email === email)) {
+    alert('Bu email zaten kayıtlı!');
+    return;
+  }
+
+  users.push({ username, email, password });
+  alert('Kayıt başarılı! Giriş yapabilirsiniz.');
+  registerScreen.classList.add('hidden');
+  loginScreen.classList.remove('hidden');
+});
+
+// Giriş
+loginBtn.addEventListener('click', () => {
+  const email = loginEmail.value.trim();
+  const password = loginPassword.value.trim();
+
+  const user = users.find(u => u.email === email && u.password === password);
+  if (!user) {
+    alert('Email veya şifre yanlış!');
+    return;
+  }
+
+  currentUser = user;
+  loginScreen.classList.add('hidden');
+  chatScreen.classList.remove('hidden');
+  currentUserSpan.textContent = currentUser.username;
+  renderMessages();
+});
+
+// Mesaj gönder
+sendMessageBtn.addEventListener('click', sendMessage);
+messageInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') sendMessage();
+});
+
+function sendMessage() {
+  const text = messageInput.value.trim();
+  if (!text) return;
+  messages.push({ user: currentUser.username, text });
+  messageInput.value = '';
+  renderMessages();
+}
+
+function renderMessages() {
+  messagesContainer.innerHTML = messages.map(m => 
+    `<div class="message"><strong>${m.user}:</strong> ${m.text}</div>`
+  ).join('');
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
