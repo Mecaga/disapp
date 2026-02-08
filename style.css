@@ -1,12 +1,51 @@
-/* Genel */
-body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-.screen { padding: 20px; text-align: center; }
-.hidden { display: none; }
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #f0f2f5;
+    margin: 0;
+}
 
-/* Chat ekranı */
-#chatScreen { display: flex; flex-direction: column; height: 80vh; max-width: 500px; margin: auto; }
-#chatHeader { font-weight: bold; font-size: 18px; margin-bottom: 10px; }
-#messagesContainer { flex: 1; overflow-y: auto; border: 1px solid #ccc; margin: 10px 0; padding: 10px; }
-#messageForm { display: flex; }
-#messageInput { flex: 1; padding: 5px; }
-#messageForm button { padding: 5px 10px; }
+#welcomeScreen, #chatScreen {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+}
+
+input {
+    width: 90%;
+    padding: 8px;
+    margin: 5px 0;
+}
+
+button {
+    padding: 8px 12px;
+    margin: 5px 0;
+    cursor: pointer;
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#messagesContainer {
+    height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    padding: 5px;
+}
