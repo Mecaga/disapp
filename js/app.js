@@ -92,4 +92,20 @@ onAuthStateChanged(auth, (user) => {
         mainApp.style.display = "none";
     }
 });
+        // Kullanıcı giriş yapmışsa
+        authScreen.style.display = "none";
+        mainApp.style.display = "flex";
+        displayUserName.textContent = user.displayName || user.email;
+        
+        // Avatar baş harfi
+        const avatar = document.querySelector('.user-avatar');
+        if (avatar && user.displayName) {
+            avatar.textContent = user.displayName.charAt(0).toUpperCase();
+        }
+    } else {
+        // Kullanıcı çıkış yapmışsa veya giriş yapmamışsa
+        authScreen.style.display = "flex";
+        mainApp.style.display = "none";
+    }
+});
 <script type="module" src="app.js"></script>
