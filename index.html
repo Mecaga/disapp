@@ -1,12 +1,24 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+
+    <!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MecagaChat</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <script>
+  // Firebase initialize
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+</script>
+
 
     <!-- Welcome Ekranı -->
     <div id="welcomeScreen" class="screen">
