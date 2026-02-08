@@ -7,16 +7,18 @@
 
 <link rel="stylesheet" href="style.css">
 </head>
+
+<body>
+
+<!-- Giriş ekranı -->
 <div id="loginScreen">
     <h2>MecagaChat Giriş</h2>
     <input id="usernameInput" placeholder="Kullanıcı adı gir">
     <button onclick="login()">Giriş Yap</button>
 </div>
 
-<body>
-
+<!-- Chat ekranı -->
 <div id="chatApp" style="display:none;">
-
 
     <div id="messagesContainer"></div>
 
@@ -27,10 +29,7 @@
 
 </div>
 
-<!-- Firebase -->
 <script type="module" src="firebase.js"></script>
-
-<!-- Uygulama -->
 <script type="module" src="app.js"></script>
 
 </body>
