@@ -92,3 +92,4 @@ onAuthStateChanged(auth, (user) => {
         mainApp.style.display = "none";
     }
 });
+<script type="module" src="app.js"></script>
