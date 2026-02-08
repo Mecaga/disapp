@@ -7,46 +7,43 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="app">
 
-        <!-- Açılış ekranı -->
-        <div id="welcomeScreen">
-            <h1>MecagaChat’e Hoş Geldiniz! 🎉</h1>
-            <div id="welcomeButtons">
-                <button id="showRegisterBtn">Kayıt Ol</button>
-                <button id="showLoginBtn">Giriş Yap</button>
-            </div>
+    <!-- Welcome Ekranı -->
+    <div id="welcomeScreen" class="screen">
+        <h1>MecagaChat Hoşgeldiniz!</h1>
+        <div>
+            <button onclick="showScreen('registerScreen')">Kayıt Ol</button>
+            <button onclick="showScreen('loginScreen')">Giriş Yap</button>
         </div>
+    </div>
 
-        <!-- Kayıt ekranı -->
-        <div id="registerScreen" class="hidden">
-            <h2>Kayıt Ol</h2>
-            <input type="text" id="regUsername" placeholder="Kullanıcı Adı">
-            <input type="email" id="regEmail" placeholder="Gmail">
-            <input type="password" id="regPassword" placeholder="Şifre">
-            <button id="registerBtn">Kayıt Ol</button>
-        </div>
+    <!-- Kayıt Ekranı -->
+    <div id="registerScreen" class="hidden screen">
+        <h2>Kayıt Ol</h2>
+        <input type="text" id="regUsername" placeholder="Kullanıcı Adı">
+        <input type="email" id="regEmail" placeholder="Email">
+        <input type="password" id="regPassword" placeholder="Şifre">
+        <button onclick="registerUser()">Kayıt Ol</button>
+        <button onclick="showScreen('welcomeScreen')">Geri</button>
+    </div>
 
-        <!-- Giriş ekranı -->
-        <div id="loginScreen" class="hidden">
-            <h2>Giriş Yap</h2>
-            <input type="email" id="loginEmail" placeholder="Gmail">
-            <input type="password" id="loginPassword" placeholder="Şifre">
-            <button id="loginBtn">Giriş Yap</button>
-        </div>
+    <!-- Giriş Ekranı -->
+    <div id="loginScreen" class="hidden screen">
+        <h2>Giriş Yap</h2>
+        <input type="email" id="loginEmail" placeholder="Email">
+        <input type="password" id="loginPassword" placeholder="Şifre">
+        <button onclick="loginUser()">Giriş Yap</button>
+        <button onclick="showScreen('welcomeScreen')">Geri</button>
+    </div>
 
-        <!-- Sohbet ekranı -->
-        <div id="chatScreen" class="hidden">
-            <div id="chatHeader">
-                <span id="currentUser"></span> • Online
-            </div>
-            <div id="messagesContainer"></div>
-            <div id="messageInputContainer">
-                <input type="text" id="messageInput" placeholder="Mesaj yaz...">
-                <button id="sendBtn">Gönder</button>
-            </div>
-        </div>
-
+    <!-- Chat Ekranı -->
+    <div id="chatScreen" class="hidden screen">
+        <div id="chatHeader">MecagaChat</div>
+        <div id="messagesContainer"></div>
+        <form id="messageForm" onsubmit="sendMessage(event)">
+            <input type="text" id="messageInput" placeholder="Mesajınızı yazın...">
+            <button type="submit">Gönder</button>
+        </form>
     </div>
 
     <script src="app.js"></script>
