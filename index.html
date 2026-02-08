@@ -1,140 +1,36 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MecagaChat Temel</title>
-    <style>
-        /* Temel stiller */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #1e1e2f;
-            color: #fff;
-        }
-        #appContainer {
-            display: flex;
-            height: 100vh;
-        }
-        #sidebar {
-            width: 250px;
-            background-color: #2c2c3e;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-        #mainContent {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        #messagesContainer {
-            flex: 1;
-            padding: 10px;
-            overflow-y: auto;
-        }
-        #inputContainer {
-            display: flex;
-            padding: 10px;
-            background-color: #2c2c3e;
-        }
-        #messageInput {
-            flex: 1;
-            padding: 8px;
-            border-radius: 5px;
-            border: none;
-        }
-        #sendButton {
-            margin-left: 5px;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 5px;
-            background-color: #4caf50;
-            color: #fff;
-            cursor: pointer;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MecagaChat</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="appContainer">
-    <div id="sidebar">
-        <h2>Sunucular</h2>
-        <div id="serversList">
-            <!-- Sunucular buraya gelecek -->
-        </div>
+<!-- LOGIN EKRANI -->
+<div id="loginScreen" class="screen">
+    <h2>Giriş Yap</h2>
+    <input type="text" id="loginUsername" placeholder="Kullanıcı Adı">
+    <input type="email" id="loginEmail" placeholder="Email">
+    <input type="password" id="loginPassword" placeholder="Şifre">
+    <button id="loginBtn">Giriş Yap</button>
+</div>
+
+<!-- CHAT EKRANI -->
+<div id="chatScreen" class="screen" style="display:none;">
+    <div class="top-bar">
+        <span id="activeUserDisplay">Hoşgeldin!</span>
     </div>
-    <div id="mainContent">
-        <div id="messagesContainer">
-            <div class="empty-state">
-                <div class="empty-state-icon">💬</div>
-                <p>Henüz mesaj yok</p>
-            </div>
-        </div>
-        <div id="inputContainer">
-            <input type="text" id="messageInput" placeholder="Mesajınızı yazın...">
-            <button id="sendButton" onclick="sendMessage()">Gönder</button>
-        </div>
+
+    <div id="messagesContainer" class="messages"></div>
+
+    <div class="message-input-area">
+        <input type="text" id="messageInput" placeholder="Mesajınızı yazın...">
+        <button id="sendBtn">Gönder</button>
     </div>
 </div>
 
-<!-- Buraya JS ve diğer eklemeler eklenecek -->
-<!-- Giriş Ekranı -->
-<div id="loginScreen" style="position: fixed; top:0; left:0; width:100%; height:100%; background:#1e1e2f; display:flex; justify-content:center; align-items:center; z-index:100;">
-    <div style="background:#2c2c3e; padding:30px; border-radius:10px; width:300px; text-align:center;">
-        <h2>Giriş Yap</h2>
-        <input type="text" id="loginUsername" placeholder="Kullanıcı Adı" style="width:100%; margin:10px 0; padding:8px; border-radius:5px; border:none;">
-        <input type="email" id="loginEmail" placeholder="Email" style="width:100%; margin:10px 0; padding:8px; border-radius:5px; border:none;">
-        <input type="password" id="loginPassword" placeholder="Şifre" style="width:100%; margin:10px 0; padding:8px; border-radius:5px; border:none;">
-        <button onclick="login()" style="margin-top:10px; padding:8px 12px; border:none; border-radius:5px; background:#4caf50; color:white; cursor:pointer;">Giriş</button>
-    </div>
-</div>
-
-<script>
-    // Kullanıcı verileri basit JS objesi ile saklanıyor (Firebase olmadan demo)
-    const usersDB = [];
-
-    function login() {
-        const username = document.getElementById('loginUsername').value.trim();
-        const email = document.getElementById('loginEmail').value.trim();
-        const password = document.getElementById('loginPassword').value.trim();
-
-        if(!username || !email || !password) {
-            alert("Lütfen tüm alanları doldurun!");
-            return;
-        }
-
-        // Kullanıcı daha önce yoksa ekle
-        let user = usersDB.find(u => u.email === email);
-        if(!user) {
-            user = {username, email, password, online:true};
-            usersDB.push(user);
-        } else {
-            // Kullanıcı varsa şifre kontrolü
-            if(user.password !== password) {
-                alert("Şifre yanlış!");
-                return;
-            }
-            user.username = username; // girişte isim güncellenebilir
-            user.online = true;
-        }
-
-        // Giriş başarılı, login ekranını gizle
-        document.getElementById('loginScreen').style.display = 'none';
-
-        // Kullanıcı adını göster
-        const userDisplay = document.createElement('div');
-        userDisplay.textContent = `Hoşgeldin, ${user.username}`;
-        userDisplay.style.padding = '10px';
-        userDisplay.style.background = '#2c2c3e';
-        userDisplay.style.textAlign = 'center';
-        userDisplay.style.fontWeight = 'bold';
-        document.body.prepend(userDisplay);
-
-        // Burada main chat ekranını açabiliriz
-        init(); // temel chat init fonksiyonu
-    }
-</script>
-
+<script src="app.js"></script>
 </body>
 </html>
