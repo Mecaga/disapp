@@ -279,3 +279,112 @@
     </script>
 </body>
 </html>
+        <div style="width:72px; background:#1e1f22; display:flex; flex-direction:column; align-items:center; padding:12px 0; gap:8px;">
+            <div class="server-icon active" onclick="switchChan('global')" title="Global Sohbet" style="width:48px; height:48px; background:var(--primary); border-radius:16px; display:flex; align-items:center; justify-content:center; color:white; font-size:20px; cursor:pointer; transition:0.2s;">
+                🌐
+            </div>
+            <div style="width:32px; height:2px; background:#35363c; margin:4px 0;"></div>
+            <div class="server-icon" onclick="showFriendsArea()" title="Arkadaşlar" style="width:48px; height:48px; background:#313338; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#dbdee1; font-size:20px; cursor:pointer; transition:0.2s;">
+                👥
+            </div>
+            <div id="serverListIcons"></div>
+            <div class="server-icon" onclick="openChannelModal()" title="Kanal Oluştur" style="width:48px; height:48px; background:#313338; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#23a559; font-size:25px; cursor:pointer; transition:0.2s;">
+                +
+            </div>
+        </div>
+        .server-icon:hover { border-radius: 16px; background: var(--success) !important; color: white !important; }
+        .friends-list-item {
+            padding: 10px;
+            margin: 5px 10px;
+            background: #2b2d31;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .friends-list-item:hover { background: #35373c; }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--success);
+            border-radius: 50%;
+            border: 2px solid var(--secondary);
+        }
+        // MESAJLARI DİNLE (GLOBAL VE KANAL AYRIMI)
+        function loadMessages() {
+            if(msgUnsubscribe) msgUnsubscribe();
+            
+            // Eğer kanal 'global' ise tüm mesajları çek, değilse kanala özel çek
+            let q;
+            if (activeChannel === "global") {
+                q = query(collection(db, "messages"), orderBy("timestamp", "asc"));
+            } else {
+                q = query(collection(db, "messages"), where("channel", "==", activeChannel), orderBy("timestamp", "asc"));
+            }
+
+            msgUnsubscribe = onSnapshot(q, (snap) => {
+                const wrapper = document.getElementById('messagesWrapper');
+                wrapper.innerHTML = "";
+                snap.forEach(doc => {
+                    const m = doc.data();
+                    // Globalde her şeyi göster, kanalda sadece o kanalı
+                    if (activeChannel === "global" || m.channel === activeChannel) {
+                        wrapper.innerHTML += `
+                            <div class="message-box animated fadeIn">
+                                <div class="user-avatar" style="background:${stringToColor(m.author)}">${m.author.charAt(0)}</div>
+                                <div class="msg-content">
+                                    <div class="msg-author">${m.author} <span style="font-size:10px; color:var(--text-muted); font-weight:normal;">${formatTime(m.timestamp)}</span></div>
+                                    <div class="msg-text">${m.text}</div>
+                                </div>
+                            </div>`;
+                    }
+                });
+                wrapper.scrollTop = wrapper.scrollHeight;
+            });
+        }
+        // ARKADAŞLARI GÖSTER
+        window.showFriendsArea = () => {
+            activeChannel = "friends";
+            document.getElementById('activeChannelTitle').innerText = "Arkadaşlar";
+            const wrapper = document.getElementById('messagesWrapper');
+            wrapper.innerHTML = `
+                <div style="padding:20px;">
+                    <h2 style="color:white; margin-bottom:20px;">Çevrimiçi Arkadaşlar</h2>
+                    <div id="friendsOnlineList"></div>
+                </div>`;
+            
+            // Tüm kullanıcıları getir (Gerçek sistemde arkadaş ekleme mantığı kurulabilir)
+            onSnapshot(collection(db, "users"), (snap) => {
+                const fList = document.getElementById('friendsOnlineList');
+                if(!fList) return;
+                fList.innerHTML = "";
+                snap.forEach(doc => {
+                    const u = doc.data();
+                    if(u.uid !== auth.currentUser.uid) {
+                        fList.innerHTML += `
+                            <div class="friends-list-item">
+                                <div class="user-avatar">${u.name.charAt(0)}</div>
+                                <div style="flex:1; color:white;">${u.name}</div>
+                                <div class="status-dot"></div>
+                            </div>`;
+                    }
+                });
+            });
+        };
+        // İsimlere göre otomatik renk atama (Globalde renkli görünmesi için)
+        function stringToColor(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return `hsl(${hash % 360}, 70%, 50%)`;
+        }
+
+        // Firebase Timestamp'i saate çevirme
+        function formatTime(timestamp) {
+            if(!timestamp) return "";
+            const date = timestamp.toDate();
+            return date.getHours() + ":" + String(date.getMinutes()).padStart(2, '0');
+        }
