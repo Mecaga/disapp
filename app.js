@@ -1,77 +1,42 @@
-// Şifre göster/gizle
-document.getElementById('toggleRegPassword').onclick = () => {
-  const pw = document.getElementById('regPassword');
-  pw.type = pw.type === 'password' ? 'text' : 'password';
+import { auth, db } from './firebase-config.js';
+import { changeUserName, monitorAuthState } from './auth.js';
+import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+// Kullanıcı giriş yaptığında arayüzü güncelle
+monitorAuthState(
+    (user) => {
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'flex';
+        document.querySelector('.user-name').textContent = user.displayName || "Yeni Kullanıcı";
+        if(user.displayName) {
+            document.querySelector('.user-avatar').textContent = user.displayName.charAt(0).toUpperCase();
+        }
+    },
+    () => {
+        document.getElementById('authScreen').style.display = 'flex';
+        document.getElementById('mainApp').style.display = 'none';
+    }
+);
+
+// Profil Kaydet Butonu (İsim Değiştirme)
+document.getElementById('saveProfileBtn').addEventListener('click', async () => {
+    const newName = document.getElementById('customStatus').value; // Input ID'si
+    const success = await changeUserName(newName);
+    if(success) {
+        alert("Profil güncellendi!");
+        location.reload();
+    }
+});
+
+// Mesaj Gönderme Fonksiyonu
+window.sendMessage = async () => {
+    const text = document.getElementById('messageInput').value;
+    if(text.trim() !== "" && auth.currentUser) {
+        await addDoc(collection(db, "messages"), {
+            text: text,
+            author: auth.currentUser.displayName || auth.currentUser.email,
+            timestamp: serverTimestamp()
+        });
+        document.getElementById('messageInput').value = "";
+    }
 };
-document.getElementById('toggleLoginPassword').onclick = () => {
-  const pw = document.getElementById('loginPassword');
-  pw.type = pw.type === 'password' ? 'text' : 'password';
-};
-
-// Kayıt
-async function handleRegister() {
-  const username = document.getElementById('regUsername').value;
-  const email = document.getElementById('regEmail').value;
-  const password = document.getElementById('regPassword').value;
-  if (!username || !email || !password) return alert('Tüm alanları doldur!');
-  try {
-    const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
-    const uid = userCredential.user.uid;
-    await firebase.database().ref('users/' + uid).set({ username, email, online: true });
-    alert('Kayıt başarılı!');
-  } catch (err) { alert(err.message); }
-}
-
-// Giriş
-async function handleLogin() {
-  const email = document.getElementById('loginEmail').value;
-  const password = document.getElementById('loginPassword').value;
-  try {
-    const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
-    const uid = userCredential.user.uid;
-    await firebase.database().ref('users/' + uid).update({ online: true });
-    document.getElementById('welcomeScreen').style.display = 'none';
-    document.getElementById('chatScreen').style.display = 'block';
-    loadMessages();
-  } catch (err) { alert(err.message); }
-}
-
-// Çıkış
-async function logoutUser() {
-  const uid = firebase.auth().currentUser.uid;
-  await firebase.database().ref('users/' + uid).update({ online: false });
-  await firebase.auth().signOut();
-  location.reload();
-}
-
-// Mesaj gönder
-function sendMessage() {
-  const input = document.getElementById('messageInput');
-  const text = input.value.trim();
-  if (!text) return;
-  const uid = firebase.auth().currentUser.uid;
-  firebase.database().ref('messages').push({
-    author: uid,
-    text,
-    timestamp: Date.now()
-  });
-  input.value = '';
-}
-
-// Enter tuşu
-function enterPress(e) { if (e.key === 'Enter') sendMessage(); }
-
-// Mesajları dinle
-function loadMessages() {
-  const container = document.getElementById('messagesContainer');
-  firebase.database().ref('messages').on('child_added', snapshot => {
-    const msg = snapshot.val();
-    firebase.database().ref('users/' + msg.author).once('value', u => {
-      const username = u.val().username;
-      const div = document.createElement('div');
-      div.textContent = username + ': ' + msg.text;
-      container.appendChild(div);
-      container.scrollTop = container.scrollHeight;
-    });
-  });
-}
