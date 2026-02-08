@@ -1,65 +1,114 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MecagaChat Online</title>
-
-<!-- CSS linki -->
-<link rel="stylesheet" href="style.css">
-
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.17.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.17.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.17.0/firebase-database-compat.js"></script>
-
-<script>
- const firebaseConfig = {
-  apiKey: "AIzaSyCAzffyBznJFzt9-mixht5NGoLLFpomXE8",
-  authDomain: "diapp-3a705.firebaseapp.com",
-  databaseURL: "https://diapp-3a705-default-rtdb.firebaseio.com",
-  projectId: "diapp-3a705",
-  storageBucket: "diapp-3a705.firebasestorage.app",
-  messagingSenderId: "681461127191",
-  appId: "1:681461127191:web:cf762e58807aeb70d36452"
-};
-  firebase.initializeApp(firebaseConfig);
-</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MecagaChat Pro</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="welcomeScreen">
-  <h1>MecagaChat’e Hoşgeldiniz 🎉</h1>
 
-  <div id="registerForm">
-    <h2>Kayıt Ol</h2>
-    <input type="text" id="regUsername" placeholder="Kullanıcı Adı">
-    <input type="email" id="regEmail" placeholder="E-mail">
-    <div class="passwordWrapper">
-      <input type="password" id="regPassword" placeholder="Şifre">
-      <button type="button" id="toggleRegPassword">👁️</button>
+    <div id="authScreen" class="modal show" style="display: flex; background: #202225; position: fixed; inset: 0; z-index: 9999; align-items: center; justify-content: center;">
+        <div class="modal-content" style="max-width: 400px; width: 90%;">
+            <div class="modal-header">
+                <h3 id="authTitle">MecagaChat'e Giriş Yap</h3>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>E-posta</label>
+                    <input type="email" id="authEmail" placeholder="ornek@mail.com">
+                </div>
+                <div class="form-group">
+                    <label>Şifre</label>
+                    <input type="password" id="authPassword" placeholder="******">
+                </div>
+                <div id="registerFields" style="display: none;">
+                    <div class="form-group">
+                        <label>Kullanıcı Adı</label>
+                        <input type="text" id="authUsername" placeholder="Furkan">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="flex-direction: column; gap: 10px;">
+                <button class="btn btn-primary" id="authBtn" style="width: 100%;">Giriş Yap</button>
+                <p id="toggleAuth" style="color: #b9bbbe; cursor: pointer; font-size: 13px; text-align: center;">
+                    Hesabın yok mu? Kayıt Ol
+                </p>
+            </div>
+        </div>
     </div>
-    <button onclick="handleRegister()">Kayıt Ol</button>
-  </div>
 
-  <div id="loginForm">
-    <h2>Giriş Yap</h2>
-    <input type="email" id="loginEmail" placeholder="E-mail">
-    <div class="passwordWrapper">
-      <input type="password" id="loginPassword" placeholder="Şifre">
-      <button type="button" id="toggleLoginPassword">👁️</button>
+    <div class="container" id="mainApp" style="display: none;">
+        
+        <div class="server-list">
+            <div class="server-icon home active" data-server="home"> 💬 </div>
+            <div class="server-separator"></div>
+            <div id="serversList"></div>
+            <div class="server-icon add-server" id="addServerBtn">+</div>
+        </div>
+
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="header-left">
+                    <span id="serverName">MecagaChat</span>
+                </div>
+            </div>
+
+            <div class="categories" id="categoriesContainer">
+                </div>
+
+            <div class="user-area" onclick="openModal('userProfileModal')">
+                <div class="user-avatar">?</div>
+                <div class="user-info">
+                    <div class="user-name" id="displayUserName">Yükleniyor...</div>
+                    <div class="user-status">🟢 Çevrimiçi</div>
+                </div>
+                <button class="icon-btn">⚙️</button>
+            </div>
+        </div>
+
+        <div class="chat-area">
+            <div id="chatContent" style="flex: 1; display: flex; flex-direction: column;">
+                <div class="chat-header" id="chatHeader">
+                    <span class="chat-header-name"># genel</span>
+                </div>
+                <div class="messages-container" id="messagesContainer">
+                    </div>
+                <div class="input-area">
+                    <div class="input-wrapper">
+                        <input type="text" placeholder="Mesaj yaz..." id="messageInput">
+                        <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <button onclick="handleLogin()">Giriş Yap</button>
-  </div>
-</div>
 
-<div id="chatScreen" style="display:none;">
-  <h2>Chat</h2>
-  <div id="messagesContainer"></div>
-  <input type="text" id="messageInput" placeholder="Mesaj yaz..." onkeypress="enterPress(event)">
-  <button onclick="sendMessage()">Gönder</button>
-  <button onclick="logoutUser()">Çıkış Yap</button>
-</div>
+    <div class="modal" id="userProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Profilini Düzenle</h3>
+                <button class="close-btn" onclick="closeModal('userProfileModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Yeni Kullanıcı Adı</label>
+                    <input type="text" id="customStatus" placeholder="Yeni adınızı yazın...">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('userProfileModal')">İptal</button>
+                <button class="btn btn-primary" id="saveProfileBtn">Değişiklikleri Kaydet</button>
+            </div>
+        </div>
+    </div>
 
-<script src="app.js"></script>
+    <script type="module" src="app.js"></script>
+
+    <script>
+        // Modal kapatma/açma yardımcı fonksiyonları (Basit UI işleri için)
+        function openModal(id) { document.getElementById(id).classList.add('show'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+    </script>
 </body>
 </html>
