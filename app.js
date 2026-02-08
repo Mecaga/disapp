@@ -1,38 +1,37 @@
 // GLOBAL DEĞİŞKENLER
 let activeUser = null;
 let activeChannel = null;
-let messages = {};
-let usersDB = [];
+let messages = {}; // Kanal mesajları
 let typingUsers = new Set();
-
-// ÖRNEK KULLANICILAR
-const users = [
-    {id:'#0001', name:'Admin', avatar:'🧑‍💻', online:true, customStatus:''},
-    {id:'#0002', name:'Bot', avatar:'🤖', online:true, customStatus:''}
-];
 
 // ÖRNEK KANAL
 const channels = [
     {id:'genel#0001', name:'genel', messages:[]}
 ];
 
+// ÖRNEK KULLANICILAR (Avatar sadece emoji)
+const users = [
+    {id:'#0001', name:'Admin', avatar:'🧑‍💻', online:true},
+    {id:'#0002', name:'Bot', avatar:'🤖', online:true}
+];
+
 // INIT
 function init() {
-    // Login ekranındayızsa buton bağla
+    // Login butonu
     const loginBtn = document.getElementById('loginBtn');
     if(loginBtn) loginBtn.addEventListener('click', login);
 
-    // Mesaj inputu Enter ile gönder
+    // Mesaj gönderme butonu
+    const sendBtn = document.getElementById('sendBtn');
+    if(sendBtn) sendBtn.addEventListener('click', sendMessage);
+
+    // Enter ile mesaj gönderme
     const input = document.getElementById('messageInput');
     if(input){
         input.addEventListener('keypress', function(e){
             if(e.key === 'Enter') sendMessage();
         });
     }
-
-    // Gönder butonu
-    const sendBtn = document.getElementById('sendBtn');
-    if(sendBtn) sendBtn.addEventListener('click', sendMessage);
 }
 
 // LOGIN
@@ -42,32 +41,22 @@ function login() {
     const password = document.getElementById('loginPassword').value.trim();
 
     if(!username || !email || !password){
-        alert("Tüm alanları doldurun!");
+        alert('Lütfen tüm alanları doldurun!');
         return;
     }
 
-    // Kullanıcı varsa al, yoksa oluştur
-    let user = usersDB.find(u => u.email === email);
-    if(!user){
-        user = {username,email,password,online:true};
-        usersDB.push(user);
-    } else {
-        if(user.password !== password){
-            alert("Şifre yanlış!");
-            return;
-        }
-        user.username = username;
-        user.online = true;
-    }
+    // Kullanıcı oluştur veya al
+    activeUser = {username,email,password,online:true};
 
-    activeUser = user;
-    activeChannel = channels[0].id; // login sonrası aktif kanal
+    // Aktif kanal
+    activeChannel = channels[0].id;
 
     // Ekran değişimi
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('chatScreen').style.display = 'flex';
 
-    document.getElementById('activeUserDisplay').textContent = `Hoşgeldin, ${user.username}`;
+    // Kullanıcı adını göster
+    document.getElementById('activeUserDisplay').textContent = `Hoşgeldin, ${activeUser.username}`;
 
     renderChannelMessages(activeChannel);
 }
@@ -93,17 +82,17 @@ function sendMessage() {
     input.value = '';
     renderChannelMessages(activeChannel);
 
-    // Örnek bot cevabı
+    // Bot cevabı
     setTimeout(()=>{
         const botTime = `${now.getHours()}:${String(now.getMinutes()+1).padStart(2,'0')}`;
         messages[activeChannel].push({
-            author: 'Bot',
-            text: 'Mesajını aldım! 👍',
-            time: botTime,
-            reactions: {}
+            author:'Bot',
+            text:'Mesajını aldım! 👍',
+            time:botTime,
+            reactions:{}
         });
         renderChannelMessages(activeChannel);
-    }, 1500);
+    },1500);
 }
 
 // MESAJLARI RENDER
