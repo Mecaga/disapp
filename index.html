@@ -3,79 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MecagaChat Pro | Online</title>
-    <style>
-        /* CSS Başlangıcı - Bölüm 2'de devam edecek */
-        :root {
-            --primary: #5865f2;
-            --secondary: #2f3136;
-            --background: #36393f;
-            --text-muted: #b9bbbe;
-            --success: #43b581;
-            --danger: #ed4245;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #202225; overflow: hidden; }
-    </style>
+    <title>MecagaChat Pro</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="notificationBar" style="display:none; position:fixed; top:0; width:100%; z-index:9999; padding:15px; color:white; text-align:center; font-weight:bold;"></div>
 
-    <div id="authScreen" style="position:fixed; inset:0; background:#2f3136; z-index:9000; display:flex; align-items:center; justify-content:center;">
-        <div style="background:#36393f; padding:40px; border-radius:12px; width:400px; box-shadow:0 8px 24px rgba(0,0,0,0.5);">
-            <div style="text-align:center; margin-bottom:30px;">
-                <h1 style="color:white; font-size:24px;">MecagaChat Pro</h1>
-                <p style="color:var(--text-muted);">Hoş geldin mübarek!</p>
-            </div>
-            <h3 id="authTitle" style="color:white; margin-bottom:15px;">Giriş Yap</h3>
+    <div id="notificationBar"></div>
+
+    <div id="authScreen" class="overlay">
+        <div class="auth-card">
+            <h1 id="authTitle">Giriş Yap</h1>
             <div id="registerFields" style="display:none;">
-                <label style="color:var(--text-muted); font-size:12px; font-weight:bold;">KULLANICI ADI</label>
-                <input type="text" id="authUsername" style="width:100%; padding:12px; background:#202225; border:none; color:white; margin:10px 0; border-radius:5px;">
+                <input type="text" id="authUsername" placeholder="Kullanıcı Adı">
             </div>
-            <label style="color:var(--text-muted); font-size:12px; font-weight:bold;">E-POSTA</label>
-            <input type="email" id="authEmail" style="width:100%; padding:12px; background:#202225; border:none; color:white; margin:10px 0; border-radius:5px;">
-            <label style="color:var(--text-muted); font-size:12px; font-weight:bold;">ŞİFRE</label>
-            <input type="password" id="authPassword" style="width:100%; padding:12px; background:#202225; border:none; color:white; margin:10px 0; border-radius:5px;">
-            <button id="authBtn" style="width:100%; padding:14px; background:var(--primary); color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer; margin-top:20px;">Devam Et</button>
-            <p id="toggleAuth" style="color:#00aff4; cursor:pointer; font-size:13px; margin-top:15px; text-align:center;">Hesabın yok mu? Kayıt Ol</p>
+            <input type="email" id="authEmail" placeholder="E-posta">
+            <input type="password" id="authPassword" placeholder="Şifre">
+            <button id="authBtn">Devam Et</button>
+            <p id="toggleAuth">Hesabın yok mu? Kayıt Ol</p>
         </div>
     </div>
 
-    <div id="mainApp" style="display:none; height:100vh;">
-        <div style="width:72px; background:#202225; display:flex; flex-direction:column; align-items:center; padding:12px 0;">
-            <div style="width:48px; height:48px; background:var(--primary); border-radius:16px; display:flex; align-items:center; justify-content:center; color:white; font-size:20px; cursor:pointer;">M</div>
-            <div style="width:32px; height:2px; background:#36393f; margin:10px 0;"></div>
-            <div id="serverListIcons"></div>
-        </div>
-    <style>
-        .container { display: flex; flex: 1; }
-        .sidebar { width: 240px; background: var(--secondary); display: flex; flex-direction: column; border-right: 1px solid #202225; }
-        .chat-area { flex: 1; display: flex; flex-direction: column; background: var(--background); }
-        .sidebar-header { padding: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.2); font-weight: bold; color: white; display: flex; justify-content: space-between; align-items: center; }
-        .category-container { flex: 1; overflow-y: auto; padding: 10px; }
-        .channel-item { padding: 8px 12px; color: var(--text-muted); cursor: pointer; border-radius: 4px; margin-bottom: 2px; transition: 0.2s; display: flex; align-items: center; }
-        .channel-item:hover { background: #393c43; color: white; }
-        .channel-item.active { background: #393c43; color: white; }
-        .user-panel { padding: 10px; background: #292b2f; display: flex; align-items: center; gap: 10px; }
-        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; }
-        .chat-header { padding: 15px; border-bottom: 1px solid #202225; color: white; display: flex; align-items: center; gap: 10px; font-weight: bold; }
-        .messages-wrapper { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
-        .message-box { display: flex; gap: 15px; }
-        .msg-content { flex: 1; }
-        .msg-author { color: white; font-weight: bold; font-size: 15px; margin-bottom: 5px; }
-        .msg-text { color: #dcddde; line-height: 1.4; word-wrap: break-word; }
-        .input-container { padding: 20px; }
-        .input-wrapper { background: #40444b; border-radius: 8px; padding: 10px 15px; display: flex; align-items: center; gap: 15px; }
-        #messageInput { flex: 1; background: transparent; border: none; color: white; font-size: 15px; outline: none; }
-        .action-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 20px; transition: 0.2s; }
-        .action-btn:hover { color: white; }
-        /* Modal Stilleri */
-        .full-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 10000; display: none; align-items: center; justify-content: center; }
-        .modal-body-custom { background: var(--secondary); padding: 25px; border-radius: 8px; width: 450px; color: white; }
-    </style>
-        <div class="container">
-            <div class="sidebar">
-                <div class="sidebar-header">
+    <div id="mainApp" style="display:none;">
+        <nav class="server-sidebar">
+            <div class="nav-icon active" id="globalBtn" title="Global Sohbet">🌐</div>
+            <div class="nav-icon" id="friendsBtn" title="Arkadaşlar">👥</div>
+            <div class="separator"></div>
+            <div class="nav-icon add-btn" id="openChanModal">+</div>
+        </nav>
+
+        <aside class="channels-sidebar">
+            <header class="sidebar-header">MecagaChat</header>
+            <div id="channelList" class="scroller"></div>
+            <footer class="user-footer">
+                <div class="avatar" id="myAvatar">?</div>
+                <div class="user-info">
+                    <span id="displayUserName">Yükleniyor...</span>
+                    <small>Çevrimiçi</small>
+                </div>
+                <button id="openProfileBtn">⚙️</button>
+            </footer>
+        </aside>
+
+        <main class="chat-main">
+            <header class="chat-header">
+                <span class="hashtag">#</span>
+                <span id="activeChannelTitle">global</span>
+            </header>
+            <div id="messagesWrapper" class="scroller"></div>
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <input type="text" id="messageInput" placeholder="Mesaj yaz...">
+                    <button id="sendBtn">➤</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="modalContainer"></div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
                     <span>MecagaChat Sunucusu</span>
                     <button class="action-btn" onclick="openChannelModal()">+</button>
                 </div>
