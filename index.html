@@ -8,24 +8,30 @@
 </head>
 <body>
 
-<!-- LOGIN EKRANI -->
-<div id="loginScreen" class="screen">
+<!-- Kayıt Ekranı -->
+<div id="registerScreen" class="screen">
+    <h2>Kayıt Ol</h2>
+    <input type="text" id="regUsername" placeholder="Kullanıcı Adı">
+    <input type="email" id="regEmail" placeholder="Email">
+    <input type="password" id="regPassword" placeholder="Şifre">
+    <button id="registerBtn">Kayıt Ol</button>
+    <p>Zaten hesabınız var mı? <span id="goToLogin">Giriş Yap</span></p>
+</div>
+
+<!-- Giriş Ekranı -->
+<div id="loginScreen" class="screen" style="display:none;">
     <h2>Giriş Yap</h2>
-    <input type="text" id="loginUsername" placeholder="Kullanıcı Adı">
     <input type="email" id="loginEmail" placeholder="Email">
     <input type="password" id="loginPassword" placeholder="Şifre">
     <button id="loginBtn">Giriş Yap</button>
+    <p>Hesabınız yok mu? <span id="goToRegister">Kayıt Ol</span></p>
 </div>
 
-<!-- CHAT EKRANI -->
+<!-- Chat Ekranı -->
 <div id="chatScreen" class="screen" style="display:none;">
-    <div class="top-bar">
-        <span id="activeUserDisplay">Hoşgeldin!</span>
-    </div>
-
-    <div id="messagesContainer" class="messages"></div>
-
-    <div class="message-input-area">
+    <div class="chat-header">Kullanıcı: <span id="userDisplay"></span></div>
+    <div id="messages" class="messages"></div>
+    <div class="chat-input">
         <input type="text" id="messageInput" placeholder="Mesajınızı yazın...">
         <button id="sendBtn">Gönder</button>
     </div>
