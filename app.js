@@ -55,3 +55,24 @@ function listenMessages(channelId) {
         renderMessages(channelId);
     });
 }
+
+
+let currentUser = null;
+
+function login() {
+
+    const username = document.getElementById("usernameInput").value.trim();
+
+    if (!username) return alert("Kullanıcı adı gir!");
+
+    currentUser = username;
+
+    // Telefon kapansa bile kayıtlı kalır
+    localStorage.setItem("username", username);
+
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("chatApp").style.display = "block";
+}
+
+window.login = login;
+
