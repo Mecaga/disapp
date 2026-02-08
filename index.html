@@ -4,198 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MecagaChat</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #1e1e2f;
-            color: #fff;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        h1 {
-            margin-top: 50px;
-            color: #00ff00;
-        }
-
-        .form-container {
-            background-color: #2a2a40;
-            padding: 20px;
-            margin-top: 20px;
-            border-radius: 10px;
-            width: 300px;
-        }
-
-        .form-container input {
-            width: 100%;
-            padding: 8px;
-            margin: 5px 0;
-            border-radius: 5px;
-            border: none;
-        }
-
-        .form-container button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 5px;
-            border: none;
-            background-color: #00ff00;
-            color: #000;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        #chatContainer {
-            display: none;
-            flex-direction: column;
-            width: 90%;
-            max-width: 600px;
-            margin-top: 20px;
-        }
-
-        #messagesContainer {
-            background-color: #2a2a40;
-            border-radius: 10px;
-            padding: 10px;
-            height: 300px;
-            overflow-y: auto;
-        }
-
-        .message {
-            margin-bottom: 10px;
-            padding: 5px 10px;
-            background-color: #3a3a5a;
-            border-radius: 8px;
-            position: relative;
-        }
-
-        .message .author {
-            font-weight: bold;
-            margin-right: 5px;
-        }
-
-        .message .time {
-            font-size: 10px;
-            color: #ccc;
-            position: absolute;
-            top: 5px;
-            right: 10px;
-        }
-
-        #messageInputContainer {
-            display: flex;
-            margin-top: 10px;
-        }
-
-        #messageInput {
-            flex: 1;
-            padding: 10px;
-            border-radius: 5px 0 0 5px;
-            border: none;
-        }
-
-        #sendBtn {
-            padding: 10px;
-            border: none;
-            background-color: #00ff00;
-            color: #000;
-            font-weight: bold;
-            border-radius: 0 5px 5px 0;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Karşılama / Giriş Kayıt Ekranı -->
+    <div id="welcomeScreen" class="screen">
+        <h1>MecagaChat'e Hoşgeldiniz! 🎉</h1>
+        
+        <!-- Kayıt Formu -->
+        <div id="registerForm">
+            <h2>Kayıt Ol</h2>
+            <input type="text" id="regUsername" placeholder="Kullanıcı Adı">
+            <input type="email" id="regEmail" placeholder="Gmail">
+            <input type="password" id="regPassword" placeholder="Şifre">
+            <button onclick="registerUser()">Kayıt Ol</button>
+        </div>
 
-    <h1>MecagaChat Hoşgeldiniz!</h1>
+        <hr>
 
-    <div class="form-container" id="authContainer">
-        <input type="text" id="username" placeholder="Kullanıcı Adı">
-        <input type="email" id="email" placeholder="Email">
-        <input type="password" id="password" placeholder="Şifre">
-        <button id="registerBtn">Kayıt Ol</button>
-        <button id="loginBtn">Giriş Yap</button>
-    </div>
-
-    <div id="chatContainer">
-        <div id="messagesContainer"></div>
-        <div id="messageInputContainer">
-            <input type="text" id="messageInput" placeholder="Mesajınızı yazın...">
-            <button id="sendBtn">Gönder</button>
+        <!-- Giriş Formu -->
+        <div id="loginForm">
+            <h2>Giriş Yap</h2>
+            <input type="email" id="loginEmail" placeholder="Gmail">
+            <input type="password" id="loginPassword" placeholder="Şifre">
+            <button onclick="loginUser()">Giriş Yap</button>
         </div>
     </div>
 
-    <script>
-        let currentUser = null;
-        let messages = [];
+    <!-- Chat Ekranı (Başlangıçta gizli) -->
+    <div id="chatScreen" class="screen" style="display:none;">
+        <div id="userInfo">
+            <span id="displayUsername"></span>
+            <span id="onlineStatus" class="online-indicator"></span>
+        </div>
 
-        // Kayıt ol
-        document.getElementById('registerBtn').addEventListener('click', () => {
-            const username = document.getElementById('username').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value.trim();
+        <div id="messagesContainer"></div>
 
-            if(!username || !email || !password) {
-                alert('Lütfen tüm alanları doldurun!');
-                return;
-            }
+        <div id="messageInputContainer">
+            <input type="text" id="messageInput" placeholder="Mesaj yaz..." onkeypress="handleEnter(event)">
+            <button onclick="sendMessage()">Gönder</button>
+        </div>
+    </div>
 
-            localStorage.setItem('user', JSON.stringify({username, email, password}));
-            alert('Kayıt başarılı! Giriş yapabilirsiniz.');
-        });
-
-        // Giriş yap
-        document.getElementById('loginBtn').addEventListener('click', () => {
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value.trim();
-
-            const storedUser = JSON.parse(localStorage.getItem('user'));
-            if(storedUser && storedUser.email === email && storedUser.password === password) {
-                currentUser = storedUser;
-                document.getElementById('authContainer').style.display = 'none';
-                document.getElementById('chatContainer').style.display = 'flex';
-                addMessage('Sistem', `${currentUser.username} çevrimiçi!`);
-            } else {
-                alert('Email veya şifre hatalı!');
-            }
-        });
-
-        // Mesaj gönder
-        function addMessage(author, text) {
-            const now = new Date();
-            const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
-            messages.push({author, text, time});
-            renderMessages();
-        }
-
-        function renderMessages() {
-            const container = document.getElementById('messagesContainer');
-            container.innerHTML = '';
-            messages.forEach(msg => {
-                const div = document.createElement('div');
-                div.classList.add('message');
-                div.innerHTML = `<span class="author">${msg.author}:</span> ${msg.text} <span class="time">${msg.time}</span>`;
-                container.appendChild(div);
-            });
-            container.scrollTop = container.scrollHeight;
-        }
-
-        document.getElementById('sendBtn').addEventListener('click', () => {
-            const text = document.getElementById('messageInput').value.trim();
-            if(!text || !currentUser) return;
-            addMessage(currentUser.username, text);
-            document.getElementById('messageInput').value = '';
-        });
-
-        document.getElementById('messageInput').addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') {
-                document.getElementById('sendBtn').click();
-            }
-        });
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
