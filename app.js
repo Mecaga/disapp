@@ -30,10 +30,11 @@ export function sendMessage() {
     const messageRef = ref(db, "messages/" + activeChannel);
 
     push(messageRef, {
-        author: "#0001",
-        text: text,
-        time: new Date().toLocaleTimeString()
-    });
+    author: currentUser,
+    text: text,
+    time: new Date().toLocaleTimeString()
+});
+
 
     input.value = "";
 }
@@ -76,3 +77,14 @@ function login() {
 
 window.login = login;
 
+window.onload = () => {
+
+    const savedUser = localStorage.getItem("username");
+
+    if (savedUser) {
+        currentUser = savedUser;
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("chatApp").style.display = "block";
+    }
+
+};
