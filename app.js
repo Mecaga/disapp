@@ -1,97 +1,60 @@
-import { db } from "./firebase.js";
-import { ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-let activeChannel = "genel";
-let messages = {};
+let messages = [];
 let currentUser = null;
 
-/* Kullanıcı giriş */
-
 function login() {
-
     const username = document.getElementById("usernameInput").value.trim();
 
-    if (!username) return alert("Kullanıcı adı gir!");
+    if (!username) {
+        alert("Kullanıcı adı gir!");
+        return;
+    }
 
     currentUser = username;
     localStorage.setItem("username", username);
 
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("chatApp").style.display = "block";
+    document.getElementById("currentUser").textContent = currentUser;
 
-    listenMessages(activeChannel);
+    renderMessages();
 }
 
-window.login = login;
-
-/* Sayfa açılınca kullanıcı kontrol */
-
 window.onload = () => {
-
     const savedUser = localStorage.getItem("username");
-
     if (savedUser) {
-
         currentUser = savedUser;
-
         document.getElementById("loginScreen").style.display = "none";
         document.getElementById("chatApp").style.display = "block";
-
-        listenMessages(activeChannel);
+        document.getElementById("currentUser").textContent = currentUser;
+        renderMessages();
     }
 };
 
-/* Mesaj gönder */
-
 function sendMessage() {
-
     const input = document.getElementById("messageInput");
     const text = input.value.trim();
-
     if (!text || !currentUser) return;
 
-    const messageRef = ref(db, "messages/" + activeChannel);
-
-    push(messageRef, {
+    messages.push({
         author: currentUser,
         text: text,
         time: new Date().toLocaleTimeString()
     });
 
     input.value = "";
+    renderMessages();
 }
 
-window.sendMessage = sendMessage;
-
-/* Mesajları dinle */
-
-function listenMessages(channelId) {
-
-    const messageRef = ref(db, "messages/" + channelId);
-
-    onValue(messageRef, (snapshot) => {
-
-        messages[channelId] = [];
-
-        snapshot.forEach(child => {
-            messages[channelId].push(child.val());
-        });
-
-        renderMessages(channelId);
-    });
-}
-
-/* Mesajları ekrana bas */
-
-function renderMessages(channelId) {
-
+function renderMessages() {
     const container = document.getElementById("messagesContainer");
-    const channelMessages = messages[channelId] || [];
+    if (messages.length === 0) {
+        container.innerHTML = `<div class="empty-state">Henüz mesaj yok</div>`;
+        return;
+    }
 
-    container.innerHTML = channelMessages.map(msg => `
+    container.innerHTML = messages.map(msg => `
         <div class="message">
-            <b>${msg.author}</b>: ${msg.text}
-            <span class="time">${msg.time}</span>
+            <b>${msg.author}</b>: ${msg.text} <span class="time">${msg.time}</span>
         </div>
     `).join("");
 
