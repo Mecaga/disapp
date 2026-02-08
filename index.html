@@ -3,31 +3,46 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Test Login</title>
+<title>MecagaChat</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="loginScreen">
-  <h2>Giriş</h2>
-  <input id="usernameInput" placeholder="Kullanıcı adı gir">
+
+<!-- Giriş Ekranı -->
+<div id="loginScreen" class="screen">
+  <h2>Giriş Yap</h2>
+  <input type="text" id="usernameInput" placeholder="Kullanıcı adını gir">
   <button onclick="login()">Giriş Yap</button>
 </div>
 
-<div id="chatApp" style="display:none;">
-  <h3>Hoşgeldin, <span id="currentUser"></span>!</h3>
+<!-- Chat Uygulama Ekranı -->
+<div id="chatApp" class="screen" style="display:none;">
+  <div id="header">
+    <div id="currentUser"></div>
+    <button onclick="logout()">Çıkış Yap</button>
+  </div>
+
+  <div id="serversList">
+    <!-- Sunucular buraya renderlanacak -->
+  </div>
+
+  <div id="chatContent">
+    <div id="categoriesList">
+      <!-- Kategoriler buraya -->
+    </div>
+    <div id="messagesContainer"></div>
+
+    <!-- Mesaj yazma alanı -->
+    <div id="messageInputContainer">
+      <input type="text" id="messageInput" placeholder="Mesaj yaz..." oninput="typing()">
+      <button onclick="sendMessage()">Gönder</button>
+    </div>
+
+    <!-- Yazıyor göstergesi -->
+    <div id="typingIndicator" style="display:none;"></div>
+  </div>
 </div>
 
-<script>
-let currentUser = null;
-
-function login() {
-  const username = document.getElementById('usernameInput').value.trim();
-  if(!username) return alert('Kullanıcı adı gir!');
-  
-  currentUser = username;
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('chatApp').style.display = 'block';
-  document.getElementById('currentUser').textContent = currentUser;
-}
-</script>
+<script src="app.js"></script>
 </body>
 </html>
