@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MecagaChat</title>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div id="chatApp">
+
+    <div id="messagesContainer"></div>
+
+    <div class="message-input">
+        <input id="messageInput" placeholder="Mesaj yaz...">
+        <button onclick="sendMessage()">Gönder</button>
+    </div>
+
+</div>
+
+<!-- Firebase -->
+<script type="module" src="firebase.js"></script>
+
+<!-- Uygulama -->
+<script type="module" src="app.js"></script>
+
+</body>
+</html>
