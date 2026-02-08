@@ -18,23 +18,30 @@
     </div>
 
     <!-- Kayıt Ekranı -->
-    <div id="registerScreen" class="hidden screen">
-        <h2>Kayıt Ol</h2>
-        <input type="text" id="regUsername" placeholder="Kullanıcı Adı">
-        <input type="email" id="regEmail" placeholder="Email">
+<div id="registerScreen" class="hidden screen">
+    <h2>Kayıt Ol</h2>
+    <input type="text" id="regUsername" placeholder="Kullanıcı Adı">
+    <input type="email" id="regEmail" placeholder="Email">
+    <div class="password-container">
         <input type="password" id="regPassword" placeholder="Şifre">
-        <button id="registerBtn">Kayıt Ol</button>
-        <button id="backFromRegister">Geri</button>
+        <button type="button" class="toggle-password" data-target="regPassword">👁️</button>
     </div>
+    <button id="registerBtn">Kayıt Ol</button>
+    <button id="backFromRegister">Geri</button>
+</div>
 
-    <!-- Giriş Ekranı -->
-    <div id="loginScreen" class="hidden screen">
-        <h2>Giriş Yap</h2>
-        <input type="email" id="loginEmail" placeholder="Email">
+<!-- Giriş Ekranı -->
+<div id="loginScreen" class="hidden screen">
+    <h2>Giriş Yap</h2>
+    <input type="email" id="loginEmail" placeholder="Email">
+    <div class="password-container">
         <input type="password" id="loginPassword" placeholder="Şifre">
-        <button id="loginBtn">Giriş Yap</button>
-        <button id="backFromLogin">Geri</button>
+        <button type="button" class="toggle-password" data-target="loginPassword">👁️</button>
     </div>
+    <button id="loginBtn">Giriş Yap</button>
+    <button id="backFromLogin">Geri</button>
+</div>
+
 
     <!-- Chat Ekranı -->
     <div id="chatScreen" class="hidden screen">
