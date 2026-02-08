@@ -88,3 +88,9 @@ window.onload = () => {
     }
 
 };
+container.innerHTML = channelMessages.map(msg => `
+    <div class="message">
+        <b>${msg.author}</b>: ${msg.text}
+        <span style="font-size:12px">${msg.time}</span>
+    </div>
+`).join("");
