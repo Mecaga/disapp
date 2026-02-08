@@ -3,377 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MecagaChat Pro</title>
+    <title>MecagaChat Pro | Online</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="notificationBar"></div>
-
     <div id="authScreen" class="overlay">
         <div class="auth-card">
             <h1 id="authTitle">Giriş Yap</h1>
+            <p style="color: #b9bbbe; font-size: 14px; margin-bottom: 20px;">MecagaChat dünyasına hoş geldin!</p>
+            
             <div id="registerFields" style="display:none;">
                 <input type="text" id="authUsername" placeholder="Kullanıcı Adı">
             </div>
+            
             <input type="email" id="authEmail" placeholder="E-posta">
             <input type="password" id="authPassword" placeholder="Şifre">
+            
             <button id="authBtn">Devam Et</button>
             <p id="toggleAuth">Hesabın yok mu? Kayıt Ol</p>
         </div>
     </div>
 
     <div id="mainApp" style="display:none;">
+        
         <nav class="server-sidebar">
             <div class="nav-icon active" id="globalBtn" title="Global Sohbet">🌐</div>
             <div class="nav-icon" id="friendsBtn" title="Arkadaşlar">👥</div>
             <div class="separator"></div>
-            <div class="nav-icon add-btn" id="openChanModal">+</div>
+            <div class="nav-icon add-btn" id="openChanModal" onclick="window.addNewChannelPrompt()">+</div>
         </nav>
 
         <aside class="channels-sidebar">
-            <header class="sidebar-header">MecagaChat</header>
-            <div id="channelList" class="scroller"></div>
+            <header class="sidebar-header">
+                <span>MecagaChat</span>
+                <span class="online-count">● Online</span>
+            </header>
+            
+            <div id="channelList" class="scroller">
+                <div class="channel-category">METİN KANALLARI</div>
+                <div class="channel-item active"># genel</div>
+            </div>
+
             <footer class="user-footer">
-                <div class="avatar" id="myAvatar">?</div>
+                <div class="avatar" id="myAvatar">M</div>
                 <div class="user-info">
                     <span id="displayUserName">Yükleniyor...</span>
-                    <small>Çevrimiçi</small>
+                    <small>#0001</small>
                 </div>
-                <button id="openProfileBtn">⚙️</button>
+                <div class="user-actions">
+                    <button class="icon-btn" id="openProfileBtn">⚙️</button>
+                </div>
             </footer>
         </aside>
 
         <main class="chat-main">
             <header class="chat-header">
                 <span class="hashtag">#</span>
-                <span id="activeChannelTitle">global</span>
+                <h3 id="activeChannelTitle">global</h3>
             </header>
-            <div id="messagesWrapper" class="scroller"></div>
+
+            <div id="messagesWrapper" class="scroller">
+                </div>
+
             <div class="input-area">
                 <div class="input-wrapper">
-                    <input type="text" id="messageInput" placeholder="Mesaj yaz...">
+                    <button class="plus-btn">+</button>
+                    <input type="text" id="messageInput" placeholder="Mesaj gönder...">
                     <button id="sendBtn">➤</button>
                 </div>
             </div>
         </main>
     </div>
 
-    <div id="modalContainer"></div>
+    <div id="profileModal" class="overlay" style="display:none; z-index: 10001;">
+        <div class="auth-card" style="width: 400px;">
+            <h3>Profil Ayarları</h3>
+            <div style="margin: 20px 0;">
+                <label style="font-size: 12px; color: #b9bbbe;">KULLANICI ADINI DEĞİŞTİR</label>
+                <input type="text" id="newNameInput" placeholder="Yeni isminiz...">
+            </div>
+            <button id="saveProfileBtn" style="background: #248046;">Değişiklikleri Kaydet</button>
+            <button id="logoutBtn" style="background: #da373c; margin-top: 10px;">Çıkış Yap</button>
+            <button onclick="document.getElementById('profileModal').style.display='none'" style="background:transparent; margin-top:10px;">Vazgeç</button>
+        </div>
+    </div>
 
     <script type="module" src="app.js"></script>
-</body>
-</html>
-                    <span>MecagaChat Sunucusu</span>
-                    <button class="action-btn" onclick="openChannelModal()">+</button>
-                </div>
-                <div class="category-container" id="channelList">
-                    </div>
-                <div class="user-panel">
-                    <div class="user-avatar" id="myAvatar">?</div>
-                    <div style="flex:1;">
-                        <div id="displayUserName" style="color:white; font-size:14px; font-weight:bold;">Yükleniyor...</div>
-                        <div style="color:var(--text-muted); font-size:12px;">Çevrimiçi</div>
-                    </div>
-                    <button class="action-btn" onclick="openProfileModal()">⚙️</button>
-                </div>
-            </div>
 
-            <div class="chat-area">
-                <div class="chat-header">
-                    <span style="color:var(--text-muted); font-size:24px;">#</span>
-                    <span id="activeChannelTitle">genel</span>
-                </div>
-                <div class="messages-wrapper" id="messagesWrapper">
-                    </div>
-                <div class="input-container">
-                    <div class="input-wrapper">
-                        <button class="action-btn">⊕</button>
-                        <input type="text" id="messageInput" placeholder="Mesaj yaz...">
-                        <button class="action-btn" id="sendBtn">➤</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <script>
+        // Basit UI geçişleri için küçük yardımcılar
+        document.getElementById('toggleAuth')?.addEventListener('click', () => {
+            const rf = document.getElementById('registerFields');
+            const title = document.getElementById('authTitle');
+            const btn = document.getElementById('authBtn');
+            const toggle = document.getElementById('toggleAuth');
 
-    <div id="channelModal" class="full-modal">
-        <div class="modal-body-custom">
-            <h3>Yeni Kanal Oluştur</h3>
-            <input type="text" id="newChannelName" placeholder="kanal-adi" style="width:100%; padding:10px; margin:20px 0; background:#202225; border:none; color:white;">
-            <button onclick="createChannelFirebase()" style="background:var(--success); color:white; padding:10px; width:100%; border:none; border-radius:4px; font-weight:bold;">Oluştur</button>
-            <button onclick="closeModals()" style="background:transparent; color:white; width:100%; margin-top:10px; border:none; cursor:pointer;">İptal</button>
-        </div>
-    </div>
-
-    <div id="profileModal" class="full-modal">
-        <div class="modal-body-custom">
-            <h3>Kullanıcı Adını Değiştir</h3>
-            <input type="text" id="newNameInput" placeholder="Yeni kullanıcı adın..." style="width:100%; padding:10px; margin:20px 0; background:#202225; border:none; color:white;">
-            <button id="updateProfileBtn" style="background:var(--primary); color:white; padding:10px; width:100%; border:none; border-radius:4px; font-weight:bold;">Güncelle ve Kaydet</button>
-            <button onclick="firebaseLogout()" style="background:var(--danger); color:white; padding:10px; width:100%; border:none; border-radius:4px; font-weight:bold; margin-top:10px;">Çıkış Yap</button>
-            <button onclick="closeModals()" style="background:transparent; color:white; width:100%; margin-top:10px; border:none; cursor:pointer;">Kapat</button>
-        </div>
-    </div>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        // FIREBASE CONFIG - BURAYA KENDİ BİLGİLERİNİ KOYDUĞUNDAN EMİN OL
-        const firebaseConfig = {
-  apiKey: "AIzaSyAsUVL3qL9LZZy1Jgkvayww0TZvdODBcr0",
-  authDomain: "what-ap.firebaseapp.com",
-  projectId: "what-ap",
-  storageBucket: "what-ap.firebasestorage.app",
-  messagingSenderId: "365632298956",
-  appId: "1:365632298956:web:9b8abf2b8bd982570ac769"
-        };
-
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        let activeChannel = "genel";
-        let isRegister = false;
-
-        // BİLDİRİM FONKSİYONU
-        window.notify = (msg, type = "info") => {
-            const bar = document.getElementById('notificationBar');
-            bar.innerText = msg;
-            bar.style.display = "block";
-            bar.style.background = type === "error" ? "#ed4245" : "#43b581";
-            setTimeout(() => bar.style.display = "none", 3000);
-        };
-
-        // GİRİŞ/KAYIT GEÇİŞİ
-        document.getElementById('toggleAuth').onclick = () => {
-            isRegister = !isRegister;
-            document.getElementById('authTitle').innerText = isRegister ? "Kayıt Ol" : "Giriş Yap";
-            document.getElementById('registerFields').style.display = isRegister ? "block" : "none";
-            document.getElementById('toggleAuth').innerText = isRegister ? "Zaten hesabın var mı? Giriş Yap" : "Hesabın yok mu? Kayıt Ol";
-        };
-
-        // AUTH İŞLEMİ
-        document.getElementById('authBtn').onclick = async () => {
-            const email = document.getElementById('authEmail').value;
-            const pass = document.getElementById('authPassword').value;
-            const uname = document.getElementById('authUsername').value;
-
-            try {
-                if(isRegister) {
-                    const res = await createUserWithEmailAndPassword(auth, email, pass);
-                    await updateProfile(res.user, { displayName: uname });
-                    notify("Hoş geldin mübarek!");
-                } else {
-                    await signInWithEmailAndPassword(auth, email, pass);
-                    notify("Giriş yapıldı.");
-                }
-            } catch (err) { notify(err.message, "error"); }
-        };
-
-        // PROFİL GÜNCELLEME
-        document.getElementById('updateProfileBtn').onclick = async () => {
-            const newName = document.getElementById('newNameInput').value;
-            if(newName && auth.currentUser) {
-                await updateProfile(auth.currentUser, { displayName: newName });
-                notify("Kullanıcı adı güncellendi!");
-                location.reload();
+            if (rf.style.display === 'none') {
+                rf.style.display = 'block';
+                title.innerText = 'Kayıt Ol';
+                btn.innerText = 'Kayıt Ol';
+                toggle.innerText = 'Zaten hesabın var mı? Giriş Yap';
+            } else {
+                rf.style.display = 'none';
+                title.innerText = 'Giriş Yap';
+                btn.innerText = 'Giriş Yap';
+                toggle.innerText = 'Hesabın yok mu? Kayıt Ol';
             }
-        };
-
-        window.firebaseLogout = () => signOut(auth);
-        window.closeModals = () => document.querySelectorAll('.full-modal').forEach(m => m.style.display = "none");
-        window.openChannelModal = () => document.getElementById('channelModal').style.display = "flex";
-        window.openProfileModal = () => document.getElementById('profileModal').style.display = "flex";
-        // KANAL OLUŞTURMA
-        window.createChannelFirebase = async () => {
-            const name = document.getElementById('newChannelName').value.trim();
-            if(name) {
-                await addDoc(collection(db, "channels"), { name: name, createdBy: auth.currentUser.uid });
-                closeModals();
-                notify("Kanal oluşturuldu!");
-            }
-        };
-
-        // MESAJ GÖNDERME
-        const sendMsg = async () => {
-            const input = document.getElementById('messageInput');
-            if(input.value.trim() && auth.currentUser) {
-                await addDoc(collection(db, "messages"), {
-                    text: input.value,
-                    author: auth.currentUser.displayName || "İsimsiz",
-                    channel: activeChannel,
-                    timestamp: serverTimestamp()
-                });
-                input.value = "";
-            }
-        };
-        document.getElementById('sendBtn').onclick = sendMsg;
-        document.getElementById('messageInput').onkeypress = (e) => { if(e.key === 'Enter') sendMsg(); };
-
-        // KANALLARI DİNLE
-        onSnapshot(collection(db, "channels"), (snap) => {
-            const list = document.getElementById('channelList');
-            list.innerHTML = `<div class="channel-item active" onclick="switchChan('genel')"># genel</div>`;
-            snap.forEach(doc => {
-                const data = doc.data();
-                list.innerHTML += `<div class="channel-item" onclick="switchChan('${data.name}')"># ${data.name}</div>`;
-            });
         });
 
-        window.switchChan = (name) => {
-            activeChannel = name;
-            document.getElementById('activeChannelTitle').innerText = name;
-            loadMessages();
-        };
-
-        // MESAJLARI DİNLE
-        let msgUnsubscribe;
-        function loadMessages() {
-            if(msgUnsubscribe) msgUnsubscribe();
-            const q = query(collection(db, "messages"), where("channel", "==", activeChannel), orderBy("timestamp", "asc"));
-            msgUnsubscribe = onSnapshot(q, (snap) => {
-                const wrapper = document.getElementById('messagesWrapper');
-                wrapper.innerHTML = "";
-                snap.forEach(doc => {
-                    const m = doc.data();
-                    wrapper.innerHTML += `
-                        <div class="message-box">
-                            <div class="user-avatar">${m.author.charAt(0)}</div>
-                            <div class="msg-content">
-                                <div class="msg-author">${m.author}</div>
-                                <div class="msg-text">${m.text}</div>
-                            </div>
-                        </div>`;
-                });
-                wrapper.scrollTop = wrapper.scrollHeight;
-            });
-        }
-
-        // DURUM KONTROLÜ
-        onAuthStateChanged(auth, (user) => {
-            if(user) {
-                document.getElementById('authScreen').style.display = "none";
-                document.getElementById('mainApp').style.display = "flex";
-                document.getElementById('displayUserName').innerText = user.displayName || user.email;
-                document.getElementById('myAvatar').innerText = (user.displayName || "U").charAt(0).toUpperCase();
-                loadMessages();
-            } else {
-                document.getElementById('authScreen').style.display = "flex";
-                document.getElementById('mainApp').style.display = "none";
-            }
+        document.getElementById('openProfileBtn')?.addEventListener('click', () => {
+            document.getElementById('profileModal').style.display = 'flex';
         });
     </script>
 </body>
 </html>
-        <div style="width:72px; background:#1e1f22; display:flex; flex-direction:column; align-items:center; padding:12px 0; gap:8px;">
-            <div class="server-icon active" onclick="switchChan('global')" title="Global Sohbet" style="width:48px; height:48px; background:var(--primary); border-radius:16px; display:flex; align-items:center; justify-content:center; color:white; font-size:20px; cursor:pointer; transition:0.2s;">
-                🌐
-            </div>
-            <div style="width:32px; height:2px; background:#35363c; margin:4px 0;"></div>
-            <div class="server-icon" onclick="showFriendsArea()" title="Arkadaşlar" style="width:48px; height:48px; background:#313338; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#dbdee1; font-size:20px; cursor:pointer; transition:0.2s;">
-                👥
-            </div>
-            <div id="serverListIcons"></div>
-            <div class="server-icon" onclick="openChannelModal()" title="Kanal Oluştur" style="width:48px; height:48px; background:#313338; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#23a559; font-size:25px; cursor:pointer; transition:0.2s;">
-                +
-            </div>
-        </div>
-        .server-icon:hover { border-radius: 16px; background: var(--success) !important; color: white !important; }
-        .friends-list-item {
-            padding: 10px;
-            margin: 5px 10px;
-            background: #2b2d31;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .friends-list-item:hover { background: #35373c; }
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            background: var(--success);
-            border-radius: 50%;
-            border: 2px solid var(--secondary);
-        }
-        // MESAJLARI DİNLE (GLOBAL VE KANAL AYRIMI)
-        function loadMessages() {
-            if(msgUnsubscribe) msgUnsubscribe();
-            
-            // Eğer kanal 'global' ise tüm mesajları çek, değilse kanala özel çek
-            let q;
-            if (activeChannel === "global") {
-                q = query(collection(db, "messages"), orderBy("timestamp", "asc"));
-            } else {
-                q = query(collection(db, "messages"), where("channel", "==", activeChannel), orderBy("timestamp", "asc"));
-            }
-
-            msgUnsubscribe = onSnapshot(q, (snap) => {
-                const wrapper = document.getElementById('messagesWrapper');
-                wrapper.innerHTML = "";
-                snap.forEach(doc => {
-                    const m = doc.data();
-                    // Globalde her şeyi göster, kanalda sadece o kanalı
-                    if (activeChannel === "global" || m.channel === activeChannel) {
-                        wrapper.innerHTML += `
-                            <div class="message-box animated fadeIn">
-                                <div class="user-avatar" style="background:${stringToColor(m.author)}">${m.author.charAt(0)}</div>
-                                <div class="msg-content">
-                                    <div class="msg-author">${m.author} <span style="font-size:10px; color:var(--text-muted); font-weight:normal;">${formatTime(m.timestamp)}</span></div>
-                                    <div class="msg-text">${m.text}</div>
-                                </div>
-                            </div>`;
-                    }
-                });
-                wrapper.scrollTop = wrapper.scrollHeight;
-            });
-        }
-        // ARKADAŞLARI GÖSTER
-        window.showFriendsArea = () => {
-            activeChannel = "friends";
-            document.getElementById('activeChannelTitle').innerText = "Arkadaşlar";
-            const wrapper = document.getElementById('messagesWrapper');
-            wrapper.innerHTML = `
-                <div style="padding:20px;">
-                    <h2 style="color:white; margin-bottom:20px;">Çevrimiçi Arkadaşlar</h2>
-                    <div id="friendsOnlineList"></div>
-                </div>`;
-            
-            // Tüm kullanıcıları getir (Gerçek sistemde arkadaş ekleme mantığı kurulabilir)
-            onSnapshot(collection(db, "users"), (snap) => {
-                const fList = document.getElementById('friendsOnlineList');
-                if(!fList) return;
-                fList.innerHTML = "";
-                snap.forEach(doc => {
-                    const u = doc.data();
-                    if(u.uid !== auth.currentUser.uid) {
-                        fList.innerHTML += `
-                            <div class="friends-list-item">
-                                <div class="user-avatar">${u.name.charAt(0)}</div>
-                                <div style="flex:1; color:white;">${u.name}</div>
-                                <div class="status-dot"></div>
-                            </div>`;
-                    }
-                });
-            });
-        };
-        // İsimlere göre otomatik renk atama (Globalde renkli görünmesi için)
-        function stringToColor(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                hash = str.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            return `hsl(${hash % 360}, 70%, 50%)`;
-        }
-
-        // Firebase Timestamp'i saate çevirme
-        function formatTime(timestamp) {
-            if(!timestamp) return "";
-            const date = timestamp.toDate();
-            return date.getHours() + ":" + String(date.getMinutes()).padStart(2, '0');
-        }
