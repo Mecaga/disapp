@@ -3,28 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MecagaChat</title>
-<link rel="stylesheet" href="style.css">
+<title>Test Login</title>
 </head>
 <body>
-
-<!-- Giriş ekranı -->
 <div id="loginScreen">
-    <h2>MecagaChat Giriş</h2>
-    <input id="usernameInput" placeholder="Kullanıcı adı gir">
-    <button onclick="login()">Giriş Yap</button>
+  <h2>Giriş</h2>
+  <input id="usernameInput" placeholder="Kullanıcı adı gir">
+  <button onclick="login()">Giriş Yap</button>
 </div>
 
-<!-- Chat ekranı -->
 <div id="chatApp" style="display:none;">
-    <h3>Hoşgeldin, <span id="currentUser"></span>!</h3>
-    <div id="messagesContainer"></div>
-    <div class="message-input">
-        <input id="messageInput" placeholder="Mesaj yaz...">
-        <button onclick="sendMessage()">Gönder</button>
-    </div>
+  <h3>Hoşgeldin, <span id="currentUser"></span>!</h3>
 </div>
 
-<script src="app.js"></script>
+<script>
+let currentUser = null;
+
+function login() {
+  const username = document.getElementById('usernameInput').value.trim();
+  if(!username) return alert('Kullanıcı adı gir!');
+  
+  currentUser = username;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('chatApp').style.display = 'block';
+  document.getElementById('currentUser').textContent = currentUser;
+}
+</script>
 </body>
 </html>
